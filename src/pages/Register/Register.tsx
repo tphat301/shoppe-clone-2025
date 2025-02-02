@@ -1,23 +1,50 @@
-import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import rules from '../../utils/rules'
-import type { RegisterOptions } from 'react-hook-form'
-type FormData = {
-  email: string
-  password: string
-  confirm_password: string
-}
+import { omit } from 'lodash'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from '@tanstack/react-query'
+import { Schema, schema } from '../../utils/rules'
+import Input from '../../components/Input'
+import DescriptionForm from '../../components/DescriptionForm/DescriptionForm'
+import { path } from '../../constants/path'
+import authApi from '../../apis/auth.api'
+import { isAxiosUnprocessableEntity } from '../../utils/utils'
+import { ResponseApi } from '../../types/utils.type'
+
+export type FormData = Schema
+type TypeBody = Omit<FormData, 'confirm_password'>
+type TypeIsAxiosUnprocessableEntity = ResponseApi<TypeBody>
 
 const Register = () => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors }
-  } = useForm<FormData>()
-  const handleSubmitForm = handleSubmit((data) => {
-    // console.log(data)
+  } = useForm<FormData>({ resolver: yupResolver(schema) })
+  const registerMutation = useMutation({
+    mutationFn: (body: TypeBody) => authApi.register(body)
   })
-  console.log(errors)
+  const handleSubmitForm = handleSubmit((data) => {
+    const body = omit(data, ['confirm_password'])
+    registerMutation.mutate(body, {
+      onSuccess: (res) => {
+        console.log(res)
+      },
+      onError: (error) => {
+        if (isAxiosUnprocessableEntity<TypeIsAxiosUnprocessableEntity>(error)) {
+          const formError = error.response?.data?.data
+          if (formError) {
+            Object.keys(formError).forEach((key) => {
+              setError(key as keyof TypeBody, {
+                message: formError[key as keyof TypeBody],
+                type: 'Server'
+              })
+            })
+          }
+        }
+      }
+    })
+  })
   return (
     <div className='bg-[rgb(238,77,45)]'>
       <div className='wrap-content lg:py-20 ssm:py-10'>
@@ -29,63 +56,42 @@ const Register = () => {
             <h2 className='ssm:text-xl lg:text-2xl text-[#222] lg:mb-6 ssm:mb-3 lg:text-left ssm:text-center capitalize'>
               Đăng ký tài khoản
             </h2>
-            <div className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'>
-              <label htmlFor='email' className='block mb-2 text-sm font-medium text-gray-900'>
-                Email
-              </label>
-              <input
-                type='text'
-                className='bg-white border-[rgba(0,0,0,.14)] border-solid border-1 text-gray-900 text-sm focus:ring-[#ee4d2d] focus:border-[#ee4d2d] block w-full p-2.5 outline-0'
-                placeholder='Email'
-                {...register('email', rules.email as { [key: string]: RegisterOptions })}
-              />
-              {errors?.email?.message && <span className='text-red-600'>{errors?.email?.message}</span>}
-            </div>
-            <div className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'>
-              <label htmlFor='password' className='block mb-2 text-sm font-medium text-gray-900'>
-                Mật khẩu
-              </label>
-              <input
-                type='password'
-                className='bg-white border-[rgba(0,0,0,.14)] border-solid border-1 text-gray-900 text-sm focus:ring-[#ee4d2d] focus:border-[#ee4d2d] block w-full p-2.5 outline-0'
-                placeholder='Mật khẩu'
-                {...register('password', {
-                  required: {
-                    value: true,
-                    message: 'Mật khẩu là bắt buộc'
-                  }
-                })}
-              />
-              {errors?.password?.message && <span className='text-red-600'>{errors?.password?.message}</span>}
-            </div>
-            <div className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'>
-              <label htmlFor='confirm_password' className='block mb-2 text-sm font-medium text-gray-900'>
-                Xác nhận mật khẩu
-              </label>
-              <input
-                type='password'
-                className='bg-white border-[rgba(0,0,0,.14)] border-solid border-1 text-gray-900 text-sm focus:ring-[#ee4d2d] focus:border-[#ee4d2d] block w-full p-2.5 outline-0'
-                placeholder='Xác nhận mật khẩu'
-                {...register('confirm_password', {
-                  required: {
-                    value: true,
-                    message: 'Xác nhận mật khẩu là bắt buộc'
-                  }
-                })}
-              />
-              {errors?.confirm_password?.message && (
-                <span className='text-red-600'>{errors?.confirm_password?.message}</span>
-              )}
-            </div>
+            <Input
+              className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'
+              name='email'
+              type='email'
+              label='Email'
+              placeholder='Email'
+              register={register}
+              errorMessage={errors?.email?.message as string}
+              classNameErrorMessage='text-red-600'
+            />
+            <Input
+              className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'
+              name='password'
+              type='password'
+              label='Mật khẩu'
+              placeholder='Mật khẩu'
+              register={register}
+              errorMessage={errors?.password?.message as string}
+              classNameErrorMessage='text-red-600'
+              autoComplete='on'
+            />
+            <Input
+              className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'
+              name='confirm_password'
+              type='password'
+              label='Xác nhận mật khẩu'
+              placeholder='Xác nhận mật khẩu'
+              register={register}
+              errorMessage={errors?.confirm_password?.message as string}
+              classNameErrorMessage='text-red-600'
+              autoComplete='on'
+            />
             <button className='text-white bg-[#ee4d2d] hover:bg-[#ee4d2d] focus:ring-4 focus:ring-[#ee4d2d78] font-medium text-sm px-5 py-2.5 me-2 mb-3 focus:outline-none w-full uppercase ssm:mt-1 lg:mt-0'>
               Đăng Ký
             </button>
-            <p className='text-[rgba(0,0,0,.54)]'>
-              <span>Bạn đã có tài khoản? </span>
-              <Link to='/login' className='text-[#ee4d2d]'>
-                Đăng nhập
-              </Link>
-            </p>
+            <DescriptionForm title='Đăng nhập' href={path.login} />
           </form>
         </div>
       </div>

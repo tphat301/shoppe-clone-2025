@@ -4,6 +4,7 @@ import Login from '../pages/Login'
 import Register from '../pages/Register'
 import RegisterLayout from '../layouts/RegisterLayout'
 import MainLayout from '../layouts/MainLayout'
+import { path } from '../constants/path'
 
 const useElementsRoute = () => {
   const routesMatch = [
@@ -23,11 +24,11 @@ const useElementsRoute = () => {
       element: <RegisterLayout />,
       children: [
         {
-          path: '/login',
+          path: path.login,
           element: <Login />
         },
         {
-          path: '/register',
+          path: path.register,
           element: <Register />
         }
       ]
