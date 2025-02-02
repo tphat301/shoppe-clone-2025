@@ -1,0 +1,20 @@
+@import 'tailwindcss';
+
+@theme {
+  --breakpoint-ssm: 375px;
+  --breakpoint-msm: 576px;
+}
+
+html {
+  height: 100%;
+}
+body {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.wrap-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: calc(100% - 30px);
+}
