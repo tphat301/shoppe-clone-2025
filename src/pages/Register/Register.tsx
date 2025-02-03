@@ -10,7 +10,7 @@ import authApi from '../../apis/auth.api'
 import { isAxiosUnprocessableEntity } from '../../utils/utils'
 import { ResponseApi } from '../../types/utils.type'
 
-export type FormData = Schema
+type FormData = Schema
 type TypeBody = Omit<FormData, 'confirm_password'>
 type TypeIsAxiosUnprocessableEntity = ResponseApi<TypeBody>
 

@@ -1,21 +1,46 @@
-import { useForm, type RegisterOptions } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
+import { yupResolver } from '@hookform/resolvers/yup'
 import DescriptionForm from '../../components/DescriptionForm/DescriptionForm'
 import Input from '../../components/Input'
-import { FormData } from '../Register/Register'
-import getRules from '../../utils/rules'
 import { path } from '../../constants/path'
+import authApi from '../../apis/auth.api'
+import { LoginSchema, loginSchema } from '../../utils/rules'
+import { isAxiosUnprocessableEntity } from '../../utils/utils'
+import { ResponseApi } from '../../types/utils.type'
 
-type FormLoginData = Omit<FormData, 'confirm_password'>
-
+type FormData = LoginSchema
+type TypeIsAxiosUnprocessableEntity = ResponseApi<FormData>
 const Login = () => {
   const {
     register,
     handleSubmit,
-    getValues,
+    setError,
     formState: { errors }
-  } = useForm<FormLoginData>()
-  const rules = getRules(getValues)
-  const handleSubmitForm = handleSubmit((data) => {})
+  } = useForm<FormData>({ resolver: yupResolver(loginSchema) })
+  const loginMutation = useMutation({
+    mutationFn: (body: FormData) => authApi.login(body)
+  })
+  const handleSubmitForm = handleSubmit((data) => {
+    loginMutation.mutate(data, {
+      onSuccess: (data) => {
+        console.log(data)
+      },
+      onError: (error) => {
+        if (isAxiosUnprocessableEntity<TypeIsAxiosUnprocessableEntity>(error)) {
+          const formError = error.response?.data?.data
+          if (formError) {
+            Object.keys(formError).forEach((key) => {
+              setError(key as keyof FormData, {
+                message: formError[key as keyof FormData],
+                type: 'Server'
+              })
+            })
+          }
+        }
+      }
+    })
+  })
   return (
     <div className='bg-[rgb(238,77,45)]'>
       <div className='wrap-content lg:py-20 ssm:py-10'>
@@ -34,7 +59,6 @@ const Login = () => {
               label='Email'
               placeholder='Email'
               register={register}
-              rules={rules.email as { [key: string]: RegisterOptions }}
               errorMessage={errors?.email?.message as string}
               classNameErrorMessage='text-red-600'
             />
@@ -45,7 +69,6 @@ const Login = () => {
               label='Mật khẩu'
               placeholder='Mật khẩu'
               register={register}
-              rules={rules.password as { [key: string]: RegisterOptions }}
               errorMessage={errors?.password?.message as string}
               classNameErrorMessage='text-red-600'
               autoComplete='on'

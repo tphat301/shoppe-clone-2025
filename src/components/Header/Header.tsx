@@ -1,27 +1,19 @@
 import { Link } from 'react-router-dom'
-import { FloatingPortal, offset, shift, useFloating } from '@floating-ui/react'
-import { arrow } from '@floating-ui/dom'
-import { useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { path } from '../../constants/path'
+import Popover from '../Popover'
 
 const Header = () => {
-  const arrownElement = useRef<HTMLElement>(null)
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-  const { x, y, strategy, refs, middlewareData } = useFloating({
-    middleware: [offset(10), shift(), arrow({ element: arrownElement.current as Element })]
-  })
-  const handleMouseEnter = () => setIsOpen(true)
-  const handleMouseLeave = () => setIsOpen(false)
   return (
     <header className='py-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)]'>
       <div className='wrap-content'>
         <div className='flex flex-wrap justify-end gap-4'>
-          <div
-            ref={refs.setReference}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+          <Popover
             className='flex items-center gap-1 hover:cursor-pointer text-white'
+            renderPopover={
+              <div className='flex flex-col py-2 px-3'>
+                <button className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>Tiếng Việt</button>
+                <button className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>English</button>
+              </div>
+            }
           >
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -48,46 +40,38 @@ const Header = () => {
             >
               <path strokeLinecap='round' strokeLinejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' />
             </svg>
-            <FloatingPortal>
-              {isOpen && (
-                <AnimatePresence>
-                  <motion.div
-                    ref={refs.setFloating}
-                    style={{
-                      position: strategy,
-                      top: y ?? 0,
-                      left: x ?? 0,
-                      transformOrigin: `${middlewareData.arrow?.x}px top`
-                    }}
-                    initial={{
-                      opacity: 0,
-                      transform: 'scale(0)'
-                    }}
-                    animate={{ opacity: 1, transform: 'scale(1)' }}
-                    exit={{ opacity: 0, transform: 'scale(0)' }}
-                  >
-                    <div className='relative rounded-sm shadow-md border border-gray-200 bg-white'>
-                      <span
-                        ref={arrownElement}
-                        className='border-x-transparent border-t-transparent border-[11px] border-b-white translate-y-[-98%] z-[1]'
-                        style={{
-                          position: 'absolute',
-                          top: middlewareData.arrow?.y,
-                          left: middlewareData.arrow?.x
-                        }}
-                      ></span>
-                      <div className='flex flex-col py-2 px-3'>
-                        <button className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>Tiếng Việt</button>
-                        <button className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>English</button>
-                      </div>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              )}
-            </FloatingPortal>
-          </div>
+          </Popover>
 
-          <div className='flex items-center gap-2 hover:cursor-pointer text-white'>
+          <Popover
+            className='flex items-center gap-1 hover:cursor-pointer text-white'
+            renderPopover={
+              <div className='flex flex-col py-2 px-3'>
+                <Link to='/' className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>
+                  Tài khoản của tôi
+                </Link>
+                <Link to='/' className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>
+                  Đơn mua
+                </Link>
+                <button className='text-start py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>
+                  Đăng xuất
+                </button>
+              </div>
+            }
+          >
+            <span className='capitalize'>phatdev123</span>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth={1.5}
+              stroke='currentColor'
+              className='size-5'
+            >
+              <path strokeLinecap='round' strokeLinejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' />
+            </svg>
+          </Popover>
+
+          {/* <div className='flex items-center gap-2 hover:cursor-pointer text-white'>
             <Link to={path.register} className='capitalize' title='Đăng ký'>
               Đăng ký
             </Link>
@@ -95,7 +79,7 @@ const Header = () => {
             <Link to={path.login} className='capitalize' title='Đăng nhập'>
               Đăng nhập
             </Link>
-          </div>
+          </div> */}
         </div>
         <div className='flex flex-wrap justify-between items-center pt-4'>
           <Link to='/' className='w-[202px] shrink-0 pr-[60px]' title='Trang chủ'>
@@ -105,7 +89,7 @@ const Header = () => {
               </g>
             </svg>
           </Link>
-          <form className='w-[760px] h-[40px] p-[3px] bg-white rounded-xs flex items-center justify-between'>
+          <form className='w-[70%] h-[40px] p-[3px] bg-white rounded-xs flex items-center justify-between'>
             <div className='px-[0.625rem] w-[calc(100%-60px)]'>
               <input
                 type='text'
@@ -131,22 +115,81 @@ const Header = () => {
               </svg>
             </button>
           </form>
-          <Link to='/' className='text-white w-[calc(100%-962px)] flex items-center justify-center' title='Giỏ hàng'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='size-6'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z'
-              />
-            </svg>
-          </Link>
+          <Popover
+            className='text-white w-[10%] flex items-center justify-center'
+            renderPopover={
+              <div className='p-2 max-w-[400px] bg-white'>
+                <div className='p-2'>
+                  <span className='text-gray-400 capitalize block mb-1'>Sản phẩm mới thêm</span>
+                  <div className='flex gap-2 my-3'>
+                    <div className='shrink-0 w-[50px] h-[50px]'>
+                      <img
+                        src='https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lvfgsjid1kkk1a@resize_w82_nl.webp'
+                        alt='Ảnh'
+                      />
+                    </div>
+                    <p className='truncate'>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate est soluta sapiente temporibus
+                      quos dolor assumenda inventore repudiandae commodi voluptatibus minus saepe id, at magni officia
+                      adipisci corporis omnis animi?
+                    </p>
+                    <p className='text-red-500'>100.000đ</p>
+                  </div>
+                  <div className='flex gap-2 my-3'>
+                    <div className='shrink-0 w-[50px] h-[50px]'>
+                      <img
+                        src='https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lvfgsjid1kkk1a@resize_w82_nl.webp'
+                        alt='Ảnh'
+                      />
+                    </div>
+                    <p className='truncate'>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate est soluta sapiente temporibus
+                      quos dolor assumenda inventore repudiandae commodi voluptatibus minus saepe id, at magni officia
+                      adipisci corporis omnis animi?
+                    </p>
+                    <p className='text-red-500'>100.000đ</p>
+                  </div>
+                  <div className='flex gap-2 my-3'>
+                    <div className='shrink-0 w-[50px] h-[50px]'>
+                      <img
+                        src='https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lvfgsjid1kkk1a@resize_w82_nl.webp'
+                        alt='Ảnh'
+                      />
+                    </div>
+                    <p className='truncate'>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate est soluta sapiente temporibus
+                      quos dolor assumenda inventore repudiandae commodi voluptatibus minus saepe id, at magni officia
+                      adipisci corporis omnis animi?
+                    </p>
+                    <p className='text-red-500'>100.000đ</p>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='capitalize text-gray-400'>(0) Thêm hàng vào giỏ</span>
+                    <Link to='/' className='rounded-sm text-white bg-[#fb5533] p-2 capitalize hover:opacity-[90%]'>
+                      Xem giỏ hàng
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            }
+          >
+            <Link to='/' className='hover:cursor-pointer'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='size-6'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z'
+                />
+              </svg>
+            </Link>
+          </Popover>
         </div>
       </div>
     </header>
