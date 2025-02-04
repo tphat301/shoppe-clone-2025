@@ -1,13 +1,27 @@
-import { useRoutes } from 'react-router-dom'
-import Product from '../pages/Product'
+import { Navigate, Outlet, useRoutes } from 'react-router-dom'
+import { useContext } from 'react'
+import ProductList from '../pages/ProductList'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import RegisterLayout from '../layouts/RegisterLayout'
 import MainLayout from '../layouts/MainLayout'
 import { path } from '../constants/path'
+import Profile from '../pages/Profile'
+import { AppContext } from '../contexts/app.context'
+
+// eslint-disable-next-line react-refresh/only-export-components
+const ProtectedRoute = () => {
+  const { isAuthenticated } = useContext(AppContext)
+  return isAuthenticated ? <Outlet /> : <Navigate to={path.login} />
+}
+// eslint-disable-next-line react-refresh/only-export-components
+const RejectedRoute = () => {
+  const { isAuthenticated } = useContext(AppContext)
+  return !isAuthenticated ? <Outlet /> : <Navigate to={path.home} />
+}
 
 const useElementsRoute = () => {
-  const routesMatch = [
+  return useRoutes([
     {
       path: '',
       element: <MainLayout />,
@@ -15,26 +29,47 @@ const useElementsRoute = () => {
         {
           path: '',
           index: true,
-          element: <Product />
+          element: <ProductList />
         }
       ]
     },
     {
       path: '',
-      element: <RegisterLayout />,
+      element: <ProtectedRoute />,
       children: [
         {
-          path: path.login,
-          element: <Login />
-        },
+          path: path.profile,
+          element: <MainLayout />,
+          children: [
+            {
+              path: '',
+              element: <Profile />
+            }
+          ]
+        }
+      ]
+    },
+    {
+      path: '',
+      element: <RejectedRoute />,
+      children: [
         {
-          path: path.register,
-          element: <Register />
+          path: '',
+          element: <RegisterLayout />,
+          children: [
+            {
+              path: path.login,
+              element: <Login />
+            },
+            {
+              path: path.register,
+              element: <Register />
+            }
+          ]
         }
       ]
     }
-  ]
-  return useRoutes(routesMatch)
+  ])
 }
 
 export default useElementsRoute

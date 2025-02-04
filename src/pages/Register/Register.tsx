@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { omit } from 'lodash'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -8,13 +10,17 @@ import DescriptionForm from '../../components/DescriptionForm/DescriptionForm'
 import { path } from '../../constants/path'
 import authApi from '../../apis/auth.api'
 import { isAxiosUnprocessableEntity } from '../../utils/utils'
-import { ResponseApi } from '../../types/utils.type'
+import { ErrorResponseApi } from '../../types/utils.type'
+import { AppContext } from '../../contexts/app.context'
+import Button from '../../components/Button'
 
 type FormData = Schema
 type TypeBody = Omit<FormData, 'confirm_password'>
-type TypeIsAxiosUnprocessableEntity = ResponseApi<TypeBody>
+type TypeIsAxiosUnprocessableEntity = ErrorResponseApi<TypeBody>
 
 const Register = () => {
+  const { setIsAuthenticated } = useContext(AppContext)
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -27,8 +33,9 @@ const Register = () => {
   const handleSubmitForm = handleSubmit((data) => {
     const body = omit(data, ['confirm_password'])
     registerMutation.mutate(body, {
-      onSuccess: (res) => {
-        console.log(res)
+      onSuccess: () => {
+        setIsAuthenticated(true)
+        navigate(path.home)
       },
       onError: (error) => {
         if (isAxiosUnprocessableEntity<TypeIsAxiosUnprocessableEntity>(error)) {
@@ -88,9 +95,13 @@ const Register = () => {
               classNameErrorMessage='text-red-600'
               autoComplete='on'
             />
-            <button className='text-white bg-[#ee4d2d] hover:bg-[#ee4d2d] focus:ring-4 focus:ring-[#ee4d2d78] font-medium text-sm px-5 py-2.5 me-2 mb-3 focus:outline-none w-full uppercase ssm:mt-1 lg:mt-0'>
+            <Button
+              className='text-white bg-[#ee4d2d] hover:bg-[#ee4d2dd2] focus:ring-4 focus:ring-[#ee4d2d78] font-medium text-sm px-5 py-2.5 me-2 mb-3 focus:outline-none w-full uppercase ssm:mt-1 lg:mt-0 hover:cursor-pointer flex items-center justify-center'
+              isLoading={registerMutation.isPending}
+              disabled={registerMutation.isPending}
+            >
               Đăng Ký
-            </button>
+            </Button>
             <DescriptionForm title='Đăng nhập' href={path.login} />
           </form>
         </div>

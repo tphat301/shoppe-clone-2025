@@ -4,6 +4,6 @@ import http from '../utils/http'
 const authApi = {
   register: (body: { email: string; password: string }) => http.post<AuthResponse>('/register', body),
   login: (body: { email: string; password: string }) => http.post<AuthResponse>('/login', body),
-  logout: () => {}
+  logout: () => http.post('/logout')
 }
 export default authApi

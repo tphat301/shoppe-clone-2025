@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { yupResolver } from '@hookform/resolvers/yup'
 import DescriptionForm from '../../components/DescriptionForm/DescriptionForm'
@@ -7,11 +8,16 @@ import { path } from '../../constants/path'
 import authApi from '../../apis/auth.api'
 import { LoginSchema, loginSchema } from '../../utils/rules'
 import { isAxiosUnprocessableEntity } from '../../utils/utils'
-import { ResponseApi } from '../../types/utils.type'
+import { ErrorResponseApi } from '../../types/utils.type'
+import { useContext } from 'react'
+import { AppContext } from '../../contexts/app.context'
+import Button from '../../components/Button'
 
 type FormData = LoginSchema
-type TypeIsAxiosUnprocessableEntity = ResponseApi<FormData>
+type TypeIsAxiosUnprocessableEntity = ErrorResponseApi<FormData>
 const Login = () => {
+  const { setIsAuthenticated } = useContext(AppContext)
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -23,8 +29,9 @@ const Login = () => {
   })
   const handleSubmitForm = handleSubmit((data) => {
     loginMutation.mutate(data, {
-      onSuccess: (data) => {
-        console.log(data)
+      onSuccess: () => {
+        setIsAuthenticated(true)
+        navigate(path.home)
       },
       onError: (error) => {
         if (isAxiosUnprocessableEntity<TypeIsAxiosUnprocessableEntity>(error)) {
@@ -73,9 +80,13 @@ const Login = () => {
               classNameErrorMessage='text-red-600'
               autoComplete='on'
             />
-            <button className='text-white bg-[#ee4d2d] hover:bg-[#ee4d2d] focus:ring-4 focus:ring-[#ee4d2d78] font-medium text-sm px-5 py-2.5 me-2 mb-3 focus:outline-none w-full uppercase'>
+            <Button
+              className='text-white bg-[#ee4d2d] hover:bg-[#ee4d2dd2] focus:ring-4 focus:ring-[#ee4d2d78] font-medium text-sm px-5 py-2.5 me-2 mb-3 focus:outline-none w-full uppercase hover:cursor-pointer flex items-center justify-center'
+              isLoading={loginMutation.isPending}
+              disabled={loginMutation.isPending}
+            >
               Đăng Nhập
-            </button>
+            </Button>
             <DescriptionForm title='Đăng ký' href={path.register} />
           </form>
         </div>

@@ -1,5 +1,5 @@
 import { User } from './user.type'
-import { ResponseApi } from './utils.type'
+import { SuccessResponseApi } from './utils.type'
 
 type Data = {
   access_token: string
@@ -9,4 +9,4 @@ type Data = {
   user: User
 }
 
-export type AuthResponse = ResponseApi<Data>
+export type AuthResponse = SuccessResponseApi<Data>

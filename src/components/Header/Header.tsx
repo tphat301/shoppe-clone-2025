@@ -1,7 +1,22 @@
+import { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
 import Popover from '../Popover'
+import authApi from '../../apis/auth.api'
+import { AppContext } from '../../contexts/app.context'
+import { path } from '../../constants/path'
 
 const Header = () => {
+  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const logoutMutation = useMutation({
+    mutationFn: authApi.logout,
+    onSuccess: () => {
+      setIsAuthenticated(false)
+    }
+  })
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
   return (
     <header className='py-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)]'>
       <div className='wrap-content'>
@@ -41,45 +56,49 @@ const Header = () => {
               <path strokeLinecap='round' strokeLinejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' />
             </svg>
           </Popover>
-
-          <Popover
-            className='flex items-center gap-1 hover:cursor-pointer text-white'
-            renderPopover={
-              <div className='flex flex-col py-2 px-3'>
-                <Link to='/' className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>
-                  Tài khoản của tôi
-                </Link>
-                <Link to='/' className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>
-                  Đơn mua
-                </Link>
-                <button className='text-start py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>
-                  Đăng xuất
-                </button>
-              </div>
-            }
-          >
-            <span className='capitalize'>phatdev123</span>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='size-5'
+          {isAuthenticated ? (
+            <Popover
+              className='flex items-center gap-1 hover:cursor-pointer text-white'
+              renderPopover={
+                <div className='flex flex-col py-2 px-3'>
+                  <Link to='/' className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>
+                    Tài khoản của tôi
+                  </Link>
+                  <Link to='/' className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>
+                    Đơn mua
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className='text-start py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              }
             >
-              <path strokeLinecap='round' strokeLinejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' />
-            </svg>
-          </Popover>
-
-          {/* <div className='flex items-center gap-2 hover:cursor-pointer text-white'>
-            <Link to={path.register} className='capitalize' title='Đăng ký'>
-              Đăng ký
-            </Link>
-            <span>|</span>
-            <Link to={path.login} className='capitalize' title='Đăng nhập'>
-              Đăng nhập
-            </Link>
-          </div> */}
+              <span className='capitalize'>phatdev123</span>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='size-5'
+              >
+                <path strokeLinecap='round' strokeLinejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' />
+              </svg>
+            </Popover>
+          ) : (
+            <div className='flex items-center gap-2 hover:cursor-pointer text-white'>
+              <Link to={path.register} className='capitalize' title='Đăng ký'>
+                Đăng ký
+              </Link>
+              <span>|</span>
+              <Link to={path.login} className='capitalize' title='Đăng nhập'>
+                Đăng nhập
+              </Link>
+            </div>
+          )}
         </div>
         <div className='flex flex-wrap justify-between items-center pt-4'>
           <Link to='/' className='w-[202px] shrink-0 pr-[60px]' title='Trang chủ'>

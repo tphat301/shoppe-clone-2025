@@ -8,6 +8,7 @@ interface Props {
   placeholder?: string
   errorMessage: string
   classNameErrorMessage?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: UseFormRegister<any>
   rules?: RegisterOptions
   autoComplete?: string
