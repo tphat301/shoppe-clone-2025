@@ -4,7 +4,13 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean
 }
 
-const Button = ({ children, isLoading, disabled, className, ...rest }: Props) => {
+const Button = ({
+  children,
+  isLoading,
+  disabled,
+  className = 'text-white bg-[#ee4d2d] hover:bg-[#ee4d2dd2] focus:ring-4 focus:ring-[#ee4d2d78] font-medium text-sm px-5 py-2.5 me-2 mb-3 focus:outline-none w-full uppercase ssm:mt-1 lg:mt-0 hover:cursor-pointer flex items-center justify-center',
+  ...rest
+}: Props) => {
   const newClassName = disabled ? className + ' cursor-not-allowed' : className
   return (
     <button className={newClassName} disabled={disabled} {...rest}>

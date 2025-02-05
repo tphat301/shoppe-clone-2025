@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 import { httpStatusCode } from '../constants/httpStatusCode'
 import { path } from '../constants/path'
 import { AuthResponse } from '../types/auth.type'
-import { clearAccessTokenFromLS, getAccessTokenFromLS, saveAccessTokenToLS } from './auth'
+import { clearLS, getAccessTokenFromLS, setAccessTokenToLS, setProfileToLS } from './auth'
 
 class Http {
   instance: AxiosInstance
@@ -33,11 +33,13 @@ class Http {
       (response) => {
         const { url } = response.config
         if (url === path.login || url === path.register) {
-          this.accessToken = (response.data as AuthResponse).data.access_token
-          saveAccessTokenToLS(this.accessToken)
+          const data = response.data as AuthResponse
+          this.accessToken = data.data.access_token
+          setAccessTokenToLS(this.accessToken)
+          setProfileToLS(data.data.user)
         } else if (url === path.logout) {
           this.accessToken = ''
-          clearAccessTokenFromLS()
+          clearLS()
         }
         return response
       },
@@ -47,6 +49,9 @@ class Http {
           const data: any | undefined = error.response?.data
           const message = data.message || error.message
           toast(message)
+        }
+        if (error.response?.status === httpStatusCode.Unauthorized) {
+          clearLS()
         }
         return Promise.reject(error)
       }

@@ -19,7 +19,7 @@ type TypeBody = Omit<FormData, 'confirm_password'>
 type TypeIsAxiosUnprocessableEntity = ErrorResponseApi<TypeBody>
 
 const Register = () => {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
   const {
     register,
@@ -33,8 +33,9 @@ const Register = () => {
   const handleSubmitForm = handleSubmit((data) => {
     const body = omit(data, ['confirm_password'])
     registerMutation.mutate(body, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsAuthenticated(true)
+        setProfile(data.data.data.user)
         navigate(path.home)
       },
       onError: (error) => {
@@ -64,42 +65,32 @@ const Register = () => {
               Đăng ký tài khoản
             </h2>
             <Input
-              className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'
               name='email'
               type='email'
               label='Email'
               placeholder='Email'
               register={register}
               errorMessage={errors?.email?.message as string}
-              classNameErrorMessage='text-red-600'
             />
             <Input
-              className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'
               name='password'
               type='password'
               label='Mật khẩu'
               placeholder='Mật khẩu'
               register={register}
               errorMessage={errors?.password?.message as string}
-              classNameErrorMessage='text-red-600'
               autoComplete='on'
             />
             <Input
-              className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'
               name='confirm_password'
               type='password'
               label='Xác nhận mật khẩu'
               placeholder='Xác nhận mật khẩu'
               register={register}
               errorMessage={errors?.confirm_password?.message as string}
-              classNameErrorMessage='text-red-600'
               autoComplete='on'
             />
-            <Button
-              className='text-white bg-[#ee4d2d] hover:bg-[#ee4d2dd2] focus:ring-4 focus:ring-[#ee4d2d78] font-medium text-sm px-5 py-2.5 me-2 mb-3 focus:outline-none w-full uppercase ssm:mt-1 lg:mt-0 hover:cursor-pointer flex items-center justify-center'
-              isLoading={registerMutation.isPending}
-              disabled={registerMutation.isPending}
-            >
+            <Button isLoading={registerMutation.isPending} disabled={registerMutation.isPending}>
               Đăng Ký
             </Button>
             <DescriptionForm title='Đăng nhập' href={path.login} />

@@ -1,11 +1,6 @@
 import { Link } from 'react-router-dom'
 
-interface Props {
-  title: string
-  href: string
-}
-
-const DescriptionForm = ({ title, href }: Props) => {
+const DescriptionForm = ({ title, href }: { title: string; href: string }) => {
   return (
     <p className='text-[rgba(0,0,0,.54)]'>
       <span>Bạn đã có tài khoản? </span>

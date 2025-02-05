@@ -7,11 +7,12 @@ import { AppContext } from '../../contexts/app.context'
 import { path } from '../../constants/path'
 
 const Header = () => {
-  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const { isAuthenticated, profile, setIsAuthenticated, setProfile } = useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: authApi.logout,
     onSuccess: () => {
       setIsAuthenticated(false)
+      setProfile(null)
     }
   })
   const handleLogout = () => {
@@ -26,7 +27,7 @@ const Header = () => {
             renderPopover={
               <div className='flex flex-col py-2 px-3'>
                 <button className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>Tiếng Việt</button>
-                <button className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>English</button>
+                <button className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>Tiếng Anh</button>
               </div>
             }
           >
@@ -61,7 +62,7 @@ const Header = () => {
               className='flex items-center gap-1 hover:cursor-pointer text-white'
               renderPopover={
                 <div className='flex flex-col py-2 px-3'>
-                  <Link to='/' className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>
+                  <Link to={path.profile} className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>
                     Tài khoản của tôi
                   </Link>
                   <Link to='/' className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>
@@ -76,7 +77,7 @@ const Header = () => {
                 </div>
               }
             >
-              <span className='capitalize'>phatdev123</span>
+              <span>{profile?.email || 'Tài khoản'}</span>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'

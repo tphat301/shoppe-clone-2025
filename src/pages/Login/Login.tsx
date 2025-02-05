@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
@@ -9,14 +10,13 @@ import authApi from '../../apis/auth.api'
 import { LoginSchema, loginSchema } from '../../utils/rules'
 import { isAxiosUnprocessableEntity } from '../../utils/utils'
 import { ErrorResponseApi } from '../../types/utils.type'
-import { useContext } from 'react'
 import { AppContext } from '../../contexts/app.context'
 import Button from '../../components/Button'
 
 type FormData = LoginSchema
 type TypeIsAxiosUnprocessableEntity = ErrorResponseApi<FormData>
 const Login = () => {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
   const {
     register,
@@ -29,8 +29,9 @@ const Login = () => {
   })
   const handleSubmitForm = handleSubmit((data) => {
     loginMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsAuthenticated(true)
+        setProfile(data.data.data.user)
         navigate(path.home)
       },
       onError: (error) => {
@@ -60,31 +61,23 @@ const Login = () => {
               Đăng nhập
             </h2>
             <Input
-              className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'
               name='email'
               type='email'
               label='Email'
               placeholder='Email'
               register={register}
               errorMessage={errors?.email?.message as string}
-              classNameErrorMessage='text-red-600'
             />
             <Input
-              className='ssm:mb-0 lg:mb-1 ssm:min-h-[91px]'
               name='password'
               type='password'
               label='Mật khẩu'
               placeholder='Mật khẩu'
               register={register}
               errorMessage={errors?.password?.message as string}
-              classNameErrorMessage='text-red-600'
               autoComplete='on'
             />
-            <Button
-              className='text-white bg-[#ee4d2d] hover:bg-[#ee4d2dd2] focus:ring-4 focus:ring-[#ee4d2d78] font-medium text-sm px-5 py-2.5 me-2 mb-3 focus:outline-none w-full uppercase hover:cursor-pointer flex items-center justify-center'
-              isLoading={loginMutation.isPending}
-              disabled={loginMutation.isPending}
-            >
+            <Button isLoading={loginMutation.isPending} disabled={loginMutation.isPending}>
               Đăng Nhập
             </Button>
             <DescriptionForm title='Đăng ký' href={path.register} />
