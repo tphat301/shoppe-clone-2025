@@ -1,25 +1,29 @@
 import { Link } from 'react-router-dom'
-
-const Product = () => {
+import { Product as IProduct } from '../../../types/product.type'
+import { discountPercent, formatNumberCurrency, formatNumberToSocicalStyle } from '../../../utils/utils'
+interface Props {
+  product: IProduct
+}
+const Product = ({ product }: Props) => {
   return (
-    <Link to=''>
+    <Link to='' className='relative'>
       <div className='bg-white shadow hover:translate-y-[-0.0625rem] hover:shadow-md duration-100 transition-transform'>
         <div className='w-full pt-[100%] relative'>
-          <img
-            className='w-full h-full absolute top-0 left-0 object-cover'
-            src='https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-m41i7j0cyhu7bf_tn.webp'
-            alt=''
-          />
+          <img className='w-full h-full absolute top-0 left-0 object-cover' src={product.image} alt={product.name} />
         </div>
         <div className='p-2'>
-          <p className='line-clamp-2 min-h-[1.75rem] text-[#000]'>
-            Giày Asics Thể Thao Nam Nữ, Giày Asisc Court MZ Thời Trang Cho Nam Và Nữ Full Box - Sam
-          </p>
-          <p className='text-[rgba(238,77,45,1)] mt-1'>
-            <span>₫ 250.000</span>
-            <span className='text-xs line-through ml-1 text-gray-400'>₫ 500.000</span>
-            <span className='bg-[rgba(254,238,234,1)] text-[.625rem] px-1 py-0.5 ml-2'>50%</span>
-          </p>
+          <p className='line-clamp-2 min-h-[1.75rem] text-[#000]'>{product.name}</p>
+          <div className='text-[rgba(238,77,45,1)] mt-1'>
+            <span>₫ {formatNumberCurrency(product.price)}</span>
+            <span className='text-xs line-through ml-1 text-gray-400'>
+              ₫ {formatNumberCurrency(product.price_before_discount)}
+            </span>
+            {product.price_before_discount && (
+              <span className='bg-[rgba(254,238,234,1)] text-[10px] px-1 py-0.5 ml-2 absolute top-2 right-2'>
+                {discountPercent(product.price_before_discount, product.price)}
+              </span>
+            )}
+          </div>
           <div className='mt-3 flex items-center'>
             <div className='flex items-center'>
               <div className='relative'>
@@ -56,7 +60,7 @@ const Product = () => {
                 </svg>
               </div>
             </div>
-            <p className='text-xs ml-2'>Đã bán được 1.3k</p>
+            <p className='text-xs ml-2'>Đã bán {formatNumberToSocicalStyle(product.sold)}</p>
           </div>
         </div>
       </div>

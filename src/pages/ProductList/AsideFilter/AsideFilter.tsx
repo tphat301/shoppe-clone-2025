@@ -5,7 +5,7 @@ import Button from '../../../components/Button'
 
 const AsideFilter = () => {
   return (
-    <div className='py-4'>
+    <div className='sticky top-[10px]'>
       <Link to={path.home} className='capitalize py-2 flex text-base font-bold' title='Tất cả danh mục'>
         Tất cả danh mục
       </Link>
