@@ -26,3 +26,9 @@ export function formatNumberToSocicalStyle(value: number) {
 export function discountPercent(oldPrice: number, newPrice: number) {
   return `${Math.round(((oldPrice - newPrice) / oldPrice) * 100)}%`
 }
+
+export function displayRating(order: number, rating: number) {
+  if (order <= rating) return '100%'
+  if (order > rating && order - rating < 1) return (rating - Math.floor(rating)) * 100 + '%'
+  return '0%'
+}

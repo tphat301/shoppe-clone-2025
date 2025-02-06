@@ -29,13 +29,13 @@ export interface ProductList {
 }
 
 export interface ProductListConfig {
-  page?: number
-  limit?: number
+  page?: number | string
+  limit?: number | string
   order?: Order.desc | Order.asc
   sort_by?: SortBy.createdAt | SortBy.view | SortBy.sold | SortBy.price
   exclude?: string
-  rating_filter?: number
-  price_max?: number
-  price_min?: number
+  rating_filter?: number | string
+  price_max?: number | string
+  price_min?: number | string
   name?: string
 }
