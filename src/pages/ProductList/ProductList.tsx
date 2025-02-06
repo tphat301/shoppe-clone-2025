@@ -1,61 +1,46 @@
-import { useQuery } from '@tanstack/react-query'
-import { useQueryParams } from '../../hooks/useQueryParams'
-import { omitBy, isUndefined } from 'lodash'
 import { Fragment } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import AsideFilter from './AsideFilter'
 import Product from './Product/Product'
 import SortProductList from './SortProductList'
 import productApi from '../../apis/product.api'
 import Pagination from '../../components/Pagination'
 import { ProductListConfig } from '../../types/product.type'
-
-export type QueryConfig = {
-  [key in keyof ProductListConfig]: string
-}
+import useQueryConfig from '../../hooks/useQueryConfig'
+import categoryApi from '../../apis/category.api'
 
 const ProductList = () => {
-  const queryParams: QueryConfig = useQueryParams()
-  const queryConfig: QueryConfig = omitBy(
-    {
-      page: queryParams.page || '1',
-      limit: queryParams.limit,
-      exclude: queryParams.exclude,
-      name: queryParams.name,
-      order: queryParams.order,
-      price_max: queryParams.price_max,
-      price_min: queryParams.price_min,
-      rating_filter: queryParams.rating_filter,
-      sort_by: queryParams.sort_by
-    },
-    isUndefined
-  )
-  const data = useQuery({
-    queryKey: ['products', queryParams],
+  const queryConfig = useQueryConfig()
+  const { data: productData } = useQuery({
+    queryKey: ['products', queryConfig],
     queryFn: () => productApi.getProducts(queryConfig as ProductListConfig),
     placeholderData: (previousData) => previousData
   })
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: categoryApi.getCategories
+  })
+  const categories = categoriesData?.data.data || []
   return (
     <div className='py-[60px] bg-gray-200'>
       <div className='wrap-content'>
         <div className='grid grid-cols-12 gap-3'>
           <div className='col-span-3'>
-            <AsideFilter />
+            <AsideFilter queryConfig={queryConfig} categories={categories} />
           </div>
           <div className='col-span-9'>
-            {data && (
+            {productData && (
               <Fragment>
-                <SortProductList
-                  queryConfig={queryConfig}
-                  pageSize={data.data?.data.data.pagination.page_size as number}
-                />
+                <SortProductList queryConfig={queryConfig} pageSize={productData.data.data.pagination.page_size} />
                 <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'>
-                  {data.data?.data.data.products.map((product, index) => (
+                  {productData.data.data.products.map((product, index) => (
                     <div className='col-span-1' key={index}>
                       <Product product={product} />
                     </div>
                   ))}
                 </div>
-                <Pagination queryConfig={queryConfig} pageSize={data.data?.data.data.pagination.page_size as number} />
+                <Pagination queryConfig={queryConfig} pageSize={productData.data.data.pagination.page_size} />
               </Fragment>
             )}
           </div>

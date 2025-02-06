@@ -1,26 +1,50 @@
-import { Link } from 'react-router-dom'
+import classNames from 'classnames'
+import { Link, createSearchParams } from 'react-router-dom'
 import { path } from '../../../constants/path'
 import Input from '../../../components/Input'
 import Button from '../../../components/Button'
+import { Category } from '../../../types/category.type'
+import { QueryConfig } from '../../../hooks/useQueryConfig'
 
-const AsideFilter = () => {
+interface Props {
+  categories: Category[]
+  queryConfig: QueryConfig
+}
+
+const AsideFilter = ({ categories, queryConfig }: Props) => {
+  const { category } = queryConfig
   return (
     <div className='sticky top-[10px]'>
-      <Link to={path.home} className='capitalize py-2 flex text-base font-bold' title='Tất cả danh mục'>
+      <Link
+        to={path.home}
+        className={classNames('capitalize py-2 flex text-base font-bold', {
+          'text-[#fb5533]': !category
+        })}
+        title='Tất cả danh mục'
+      >
         Tất cả danh mục
       </Link>
       <div className='bg-gray-300 h-[1px] w-full' />
       <ul>
-        <li className='py-2'>
-          <Link to={path.home} className='capitalize text-[#fb5533] px-2 font-semibold'>
-            Thời trang nam
-          </Link>
-        </li>
-        <li className='py-2'>
-          <Link to={path.home} className='capitalize px-2 font-semibold'>
-            Thời trang nữ
-          </Link>
-        </li>
+        {categories.map((categoryItem) => (
+          <li className='py-2' key={categoryItem._id}>
+            <Link
+              to={{
+                pathname: path.home,
+                search: createSearchParams({
+                  ...queryConfig,
+                  category: categoryItem._id
+                }).toString()
+              }}
+              className={classNames('capitalize px-2 font-semibol', {
+                'text-[#fb5533]': category === categoryItem._id
+              })}
+              title={categoryItem.name}
+            >
+              {categoryItem.name}
+            </Link>
+          </li>
+        ))}
       </ul>
       <div className='bg-gray-300 h-[1px] w-full' />
       <div className='font-bold mt-3'>Khoảng giá:</div>

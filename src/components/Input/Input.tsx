@@ -18,11 +18,10 @@ const Input = ({
   label,
   name,
   classNameErrorMessage = 'text-red-600',
-  placeholder,
   errorMessage,
   register,
   rules,
-  autoComplete
+  ...rest
 }: Props) => {
   const registerResult = register && name ? register(name, rules) : {}
   return (
@@ -32,13 +31,7 @@ const Input = ({
           {label}
         </label>
       )}
-      <input
-        type={type}
-        className={classNameInput}
-        placeholder={placeholder}
-        {...registerResult}
-        autoComplete={autoComplete}
-      />
+      <input type={type} className={classNameInput} {...registerResult} {...rest} />
       {errorMessage && <span className={classNameErrorMessage}>{errorMessage}</span>}
     </div>
   )

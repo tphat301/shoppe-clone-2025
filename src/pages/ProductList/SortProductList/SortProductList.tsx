@@ -2,9 +2,9 @@ import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import classNames from 'classnames'
 import { omit } from 'lodash'
 import { path } from '../../../constants/path'
-import { QueryConfig } from '../ProductList'
 import { ProductListConfig } from '../../../types/product.type'
 import { Order, SortBy } from '../../../constants/product'
+import { QueryConfig } from '../../../hooks/useQueryConfig'
 interface Props {
   queryConfig: QueryConfig
   pageSize: number
