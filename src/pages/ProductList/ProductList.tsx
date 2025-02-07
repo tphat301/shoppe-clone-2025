@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import AsideFilter from './AsideFilter'
 import Product from './Product/Product'
 import SortProductList from './SortProductList'
@@ -14,7 +14,7 @@ const ProductList = () => {
   const { data: productData } = useQuery({
     queryKey: ['products', queryConfig],
     queryFn: () => productApi.getProducts(queryConfig as ProductListConfig),
-    placeholderData: (previousData) => previousData
+    placeholderData: keepPreviousData
   })
 
   const { data: categoriesData } = useQuery({

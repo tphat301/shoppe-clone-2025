@@ -21,12 +21,13 @@ type TypeIsAxiosUnprocessableEntity = ErrorResponseApi<TypeBody>
 const Register = () => {
   const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
+  const formData = schema.omit(['price_max', 'price_min'])
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors }
-  } = useForm<FormData>({ resolver: yupResolver(schema) })
+  } = useForm<FormData>({ resolver: yupResolver(formData) })
   const registerMutation = useMutation({
     mutationFn: (body: TypeBody) => authApi.register(body)
   })
