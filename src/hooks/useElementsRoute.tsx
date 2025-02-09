@@ -8,6 +8,7 @@ import MainLayout from '../layouts/MainLayout'
 import { path } from '../constants/path'
 import Profile from '../pages/Profile'
 import { AppContext } from '../contexts/app.context'
+import ProductDetail from '../pages/ProductDetail'
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute = () => {
@@ -30,6 +31,16 @@ const useElementsRoute = () => {
           path: '',
           index: true,
           element: <ProductList />
+        }
+      ]
+    },
+    {
+      path: path.productDetail,
+      element: <MainLayout />,
+      children: [
+        {
+          path: '',
+          element: <ProductDetail />
         }
       ]
     },

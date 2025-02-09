@@ -6,6 +6,7 @@ import { eventTargetLS } from './utils/auth'
 function App() {
   const elementsRoute = useElementsRoute()
   const { reset } = useContext(AppContext)
+
   useEffect(() => {
     eventTargetLS.addEventListener('clearLS', reset)
     return () => {

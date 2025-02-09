@@ -1,0 +1,236 @@
+import DOMPurify from 'dompurify'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from 'react-router-dom'
+import productApi from '../../apis/product.api'
+import InputNumber from '../../components/InputNumber'
+import { Product as TypeProduct, ProductListConfig } from '../../types/product.type'
+import { discountPercent, formatNumberCurrency, formatNumberToSocicalStyle, getIdFromNameId } from '../../utils/utils'
+import Product from '../ProductList/components/Product'
+
+const ProductDetail = () => {
+  const { nameId } = useParams()
+  const id = getIdFromNameId(nameId as string)
+  const imageRef = useRef<HTMLImageElement>(null)
+  const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
+  const [currentImagesActive, setCurrentImagesActive] = useState('')
+  const { data: productDetailData } = useQuery({
+    queryKey: ['product', id],
+    queryFn: () => productApi.getProductDetail(id as string)
+  })
+  const product = productDetailData?.data.data
+  const currentImages = useMemo(
+    () => (product ? product.images.slice(...currentIndexImages) : []),
+    [product, currentIndexImages]
+  )
+
+  const queryConfig: ProductListConfig = {
+    page: '1',
+    limit: '20',
+    category: product?.category._id
+  }
+  const { data: productByCategory } = useQuery({
+    queryKey: ['products', queryConfig],
+    queryFn: () => productApi.getProducts(queryConfig as ProductListConfig),
+    staleTime: 3 * 60 * 1000,
+    enabled: Boolean(product)
+  })
+
+  console.log(productByCategory)
+
+  useEffect(() => {
+    if (product && product.images.length) setCurrentImagesActive(product.images[0])
+  }, [product])
+
+  const chooseActiveImage = (image: string) => {
+    setCurrentImagesActive(image)
+  }
+
+  const prev = () => {
+    if (currentIndexImages[0] > 0) setCurrentIndexImages((prevState) => [prevState[0] - 1, prevState[1] - 1])
+  }
+
+  const next = () => {
+    if (currentIndexImages[1] < (product as TypeProduct).images.length) {
+      setCurrentIndexImages((prevState) => [prevState[0] + 1, prevState[1] + 1])
+    }
+  }
+
+  const handleZoomIn = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const image = imageRef.current as HTMLImageElement
+    const { offsetX, offsetY } = event.nativeEvent
+    const { naturalWidth, naturalHeight } = image
+    const left = offsetX * (1 - naturalWidth / rect.width)
+    const top = offsetY * (1 - naturalHeight / rect.height)
+    image.style.width = `${naturalWidth}px`
+    image.style.height = `${naturalHeight}px`
+    image.style.maxWidth = 'unset'
+    image.style.left = `${left}px`
+    image.style.top = `${top}px`
+  }
+
+  const handleZoomOut = () => {
+    const image = imageRef.current as HTMLImageElement
+    image.removeAttribute('style')
+  }
+
+  if (!product) return null
+  return (
+    <div className='bg-gray-100 py-3'>
+      <div className='wrap-content'>
+        <div className='bg-white p-4 grid grid-cols-12 gap-6 shadow'>
+          <div className='col-span-5'>
+            <div
+              className='w-full pt-[100%] hover:cursor-zoom-in relative overflow-hidden z-10'
+              onMouseMove={handleZoomIn}
+              onMouseLeave={handleZoomOut}
+            >
+              <img
+                className='w-full h-full pointer-events-none absolute top-0 left-0 object-cover'
+                src={currentImagesActive}
+                alt={product.name}
+                ref={imageRef}
+              />
+            </div>
+            <div className='relative my-2'>
+              <button
+                className='bg-black/30 text-white absolute left-[5px] top-1/2 -translate-y-1/2 z-10 w-5 h-10 hover:cursor-pointer hover:bg-black duration-200'
+                onClick={prev}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth='1.5'
+                  stroke='currentColor'
+                  className='size-5'
+                >
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5 8.25 12l7.5-7.5' />
+                </svg>
+              </button>
+              <div className='grid grid-cols-5'>
+                {currentImages.map((img) => {
+                  const isActice = img === currentImagesActive
+                  return (
+                    <div
+                      className='p-1 col-span-1 hover:cursor-pointer'
+                      key={img}
+                      onMouseEnter={() => chooseActiveImage(img)}
+                    >
+                      <div className='relative w-full pt-[100%]'>
+                        <img className='w-full h-full absolute top-0 left-0 object-cover' src={img} alt={img} />
+                        {isActice && <div className='border-2 border-[#f53d2d] absolute inset-0 w-full h-full' />}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              <button
+                className='bg-black/30 text-white absolute right-[5px] top-1/2 -translate-y-1/2 z-10 w-5 h-10 hover:cursor-pointer hover:bg-black duration-200'
+                onClick={next}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth='1.5'
+                  stroke='currentColor'
+                  className='size-5'
+                >
+                  <path strokeLinecap='round' strokeLinejoin='round' d='m8.25 4.5 7.5 7.5-7.5 7.5' />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div className='col-span-7'>
+            <h2 className='capitalize font-normal text-black text-xl'>{product.name}</h2>
+            <div className='py-2 text-base'>
+              Giá:
+              <span className='text-red-500 font-semibold'> {formatNumberCurrency(product.price)} ₫</span>
+              <span className='text-xs line-through ml-1 text-gray-400'>
+                {formatNumberCurrency(product.price_before_discount)} ₫
+              </span>
+              <span className='bg-[rgba(254,238,234,1)] text-xs px-2 py-1 ml-2 text-red-600'>
+                {discountPercent(product.price_before_discount, product.price)}
+              </span>
+            </div>
+            <div className='py-2 text-base'>
+              Sản phẩm có sẵn:
+              <span className='text-black font-semibold'> {product.quantity}</span>
+            </div>
+            <div className='py-2 text-base'>
+              Đã bán:
+              <span className='text-black font-semibold'> {formatNumberToSocicalStyle(product.sold)}</span>
+            </div>
+            <div className='py-2'>
+              Số lượng:
+              <div className='flex items-center mt-2'>
+                <button className='px-2 border-1 border-gray-300 border-r-0 flex justify-center items-center hover:cursor-pointer h-[30px] rounded-tl-[4px] rounded-bl-[4px]'>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth={1.5}
+                    stroke='currentColor'
+                    className='size-3'
+                  >
+                    <path strokeLinecap='round' strokeLinejoin='round' d='M5 12h14' />
+                  </svg>
+                </button>
+                <InputNumber
+                  className=''
+                  classNameInput='border-1 border-gray-300 outline-0 w-[50px] h-[30px] px-2 text-center'
+                  value={1}
+                />
+                <button className='px-2 border-1 border-gray-300 border-l-0 flex justify-center items-center hover:cursor-pointer h-[30px] rounded-tr-[4px] rounded-br-[4px]'>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth={1.5}
+                    stroke='currentColor'
+                    className='size-3'
+                  >
+                    <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className='flex flex-wrap gap-3 py-2'>
+              <button className='capitalize text-red-600 rounded-sm border-1 border-red-600 bg-[rgba(208,1,27,.08)] px-3 py-2 hover:cursor-pointer duration-200 hover:bg-red-600 hover:text-white text-base'>
+                Thêm vào giỏ hàng
+              </button>
+              <button className='capitalize text-red-600 rounded-sm border-1 border-red-600 bg-[rgba(208,1,27,.08)] px-3 py-2 hover:cursor-pointer duration-200 hover:bg-red-600 hover:text-white text-base'>
+                Mua ngay
+              </button>
+            </div>
+          </div>
+          <div className='col-span-12'>
+            <strong className='text-base'>Mô tả sản phẩm:</strong>
+            <div
+              className='text-black'
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(product.description)
+              }}
+            />
+          </div>
+          <div className='col-span-12'>
+            <h3 className='capitalize text-lg'>Sản phẩm liên quan</h3>
+            {productByCategory && (
+              <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'>
+                {productByCategory.data.data.products.map((product, index) => (
+                  <div className='col-span-1' key={index}>
+                    <Product product={product} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default ProductDetail

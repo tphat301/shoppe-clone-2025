@@ -1,13 +1,20 @@
 import { Link } from 'react-router-dom'
-import { Product as IProduct } from '../../../types/product.type'
-import { discountPercent, formatNumberCurrency, formatNumberToSocicalStyle } from '../../../utils/utils'
-import ProductRating from '../../../components/ProductRating'
+import { Product as IProduct } from '../../../../types/product.type'
+import {
+  discountPercent,
+  formatNumberCurrency,
+  formatNumberToSocicalStyle,
+  generateNameId
+} from '../../../../utils/utils'
+import ProductRating from '../../../../components/ProductRating'
+import { path } from '../../../../constants/path'
+
 interface Props {
   product: IProduct
 }
 const Product = ({ product }: Props) => {
   return (
-    <Link to='' className='relative'>
+    <Link to={`${path.home}${generateNameId({ name: product.name, id: product._id })}`} className='relative'>
       <div className='bg-white shadow hover:translate-y-[-0.0625rem] hover:shadow-md duration-100 transition-transform'>
         <div className='w-full pt-[100%] relative'>
           <img className='w-full h-full absolute top-0 left-0 object-cover' src={product.image} alt={product.name} />

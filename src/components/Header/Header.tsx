@@ -1,12 +1,28 @@
-import { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import Popover from '../Popover'
 import authApi from '../../apis/auth.api'
 import { AppContext } from '../../contexts/app.context'
 import { path } from '../../constants/path'
+import classNames from 'classnames'
+import useQueryConfig from '../../hooks/useQueryConfig'
+import { useForm } from 'react-hook-form'
+import { SearchSchema, searchSchema } from '../../utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { omit } from 'lodash'
 
 const Header = () => {
+  const { register, handleSubmit } = useForm<SearchSchema>({
+    defaultValues: {
+      name: ''
+    },
+    resolver: yupResolver(searchSchema)
+  })
+  const queryConfig = useQueryConfig()
+  const navigate = useNavigate()
+  const headerRef = useRef<HTMLElement>(null)
+  const [headerSticky, setHeaderSticky] = useState(false)
   const { isAuthenticated, profile, setIsAuthenticated, setProfile } = useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: authApi.logout,
@@ -15,11 +31,46 @@ const Header = () => {
       setProfile(null)
     }
   })
+
+  useEffect(() => {
+    const headerHeight = (headerRef.current as HTMLElement).offsetHeight
+    function handleScroll() {
+      setHeaderSticky(window.scrollY >= headerHeight)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   const handleLogout = () => {
     logoutMutation.mutate()
   }
+
+  const onSubmitSearch = handleSubmit((data) => {
+    const config = queryConfig.order
+      ? omit(
+          {
+            ...queryConfig,
+            name: data.name
+          },
+          ['order', 'sort_by']
+        )
+      : {
+          ...queryConfig,
+          name: data.name
+        }
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(config).toString()
+    })
+  })
   return (
-    <header className='py-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)]'>
+    <header
+      ref={headerRef}
+      className={classNames('py-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)] z-50', {
+        'sticky top-0 left-0 right-0 w-full transition-all shadow duration-300 will-change-transform backdrop-blur-md':
+          headerSticky === true
+      })}
+    >
       <div className='wrap-content'>
         <div className='flex flex-wrap justify-end gap-4'>
           <Popover
@@ -109,13 +160,16 @@ const Header = () => {
               </g>
             </svg>
           </Link>
-          <form className='w-[70%] h-[40px] p-[3px] bg-white rounded-xs flex items-center justify-between'>
+          <form
+            className='w-[70%] h-[40px] p-[3px] bg-white rounded-xs flex items-center justify-between'
+            onSubmit={onSubmitSearch}
+          >
             <div className='px-[0.625rem] w-[calc(100%-60px)]'>
               <input
                 type='text'
-                name='search'
                 className='w-full outline-0'
                 placeholder='Shopee bao ship 0Đ - Đăng ký ngay!'
+                {...register('name')}
               />
             </div>
             <button className='bg-[#fb5533] w-[60px] h-[34px] p-[0px_15px] text-white rounded-[3px] hover:cursor-pointer hover:opacity-[90%] flex items-center justify-center'>

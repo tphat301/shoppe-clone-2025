@@ -94,11 +94,14 @@ export const schema = yup.object({
     name: 'price-not-allow',
     message: 'Giá không phù hợp',
     test: testPrice
-  })
+  }),
+  name: yup.string().trim().required()
 })
 export type Schema = Omit<yup.InferType<typeof schema>, 'price_max' | 'price_min'>
 export const loginSchema = schema.pick(['email', 'password'])
 export type LoginSchema = Pick<yup.InferType<typeof loginSchema>, 'email' | 'password'>
 export const priceSchema = schema.pick(['price_min', 'price_max'])
 export type PriceSchema = NoUndefinedField<yup.InferType<typeof priceSchema>>
+export const searchSchema = schema.pick(['name'])
+export type SearchSchema = Pick<yup.InferType<typeof searchSchema>, 'name'>
 export default getRules

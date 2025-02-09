@@ -2,12 +2,14 @@ import classNames from 'classnames'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
-import { path } from '../../../constants/path'
-import Button from '../../../components/Button'
-import { Category } from '../../../types/category.type'
-import { QueryConfig } from '../../../hooks/useQueryConfig'
-import InputNumber from '../../../components/InputNumber'
-import { PriceSchema, priceSchema } from '../../../utils/rules'
+import { path } from '../../../../constants/path'
+import Button from '../../../../components/Button'
+import { Category } from '../../../../types/category.type'
+import { QueryConfig } from '../../../../hooks/useQueryConfig'
+import InputNumber from '../../../../components/InputNumber'
+import { PriceSchema, priceSchema } from '../../../../utils/rules'
+import RatingFilter from '../RatingFilter'
+import { omit } from 'lodash'
 
 interface Props {
   categories: Category[]
@@ -39,6 +41,13 @@ const AsideFilter = ({ categories, queryConfig }: Props) => {
       }).toString()
     })
   })
+
+  const handleRemoveAll = () => {
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(omit(queryConfig, ['price_min', 'price_max', 'category', 'rating_filter'])).toString()
+    })
+  }
   return (
     <div className='sticky top-[10px]'>
       <Link
@@ -127,33 +136,9 @@ const AsideFilter = ({ categories, queryConfig }: Props) => {
         <Button>Áp dụng</Button>
       </form>
       <div className='bg-gray-300 h-[1px] w-full' />
-      <div className='font-bold mt-3'>Đánh giá:</div>
-      <ul>
-        <li className='py-4'>
-          <Link to='' className='flex items-center' title='Star'>
-            {Array(5)
-              .fill(0)
-              .map((_, index) => (
-                <svg
-                  key={index}
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  fill='currentColor'
-                  className='size-5 fill-[#ffb720]'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-              ))}
-            <span className='ml-2'>trở lên</span>
-          </Link>
-        </li>
-      </ul>
-      <div className='bg-gray-300 h-[1px] w-full mb-3' />
-      <Button>Xóa tất cả</Button>
+      <RatingFilter queryConfig={queryConfig} />
+      <div className='bg-gray-300 h-[1px] w-full my-3' />
+      <Button onClick={handleRemoveAll}>Xóa tất cả</Button>
     </div>
   )
 }
