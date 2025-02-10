@@ -3,10 +3,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import productApi from '../../apis/product.api'
-import InputNumber from '../../components/InputNumber'
 import { Product as TypeProduct, ProductListConfig } from '../../types/product.type'
 import { discountPercent, formatNumberCurrency, formatNumberToSocicalStyle, getIdFromNameId } from '../../utils/utils'
 import Product from '../ProductList/components/Product'
+import QuantityController from '../../components/QuantityController'
 
 const ProductDetail = () => {
   const { nameId } = useParams()
@@ -164,38 +164,7 @@ const ProductDetail = () => {
               <span className='text-black font-semibold'> {formatNumberToSocicalStyle(product.sold)}</span>
             </div>
             <div className='py-2'>
-              Số lượng:
-              <div className='flex items-center mt-2'>
-                <button className='px-2 border-1 border-gray-300 border-r-0 flex justify-center items-center hover:cursor-pointer h-[30px] rounded-tl-[4px] rounded-bl-[4px]'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='size-3'
-                  >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M5 12h14' />
-                  </svg>
-                </button>
-                <InputNumber
-                  className=''
-                  classNameInput='border-1 border-gray-300 outline-0 w-[50px] h-[30px] px-2 text-center'
-                  value={1}
-                />
-                <button className='px-2 border-1 border-gray-300 border-l-0 flex justify-center items-center hover:cursor-pointer h-[30px] rounded-tr-[4px] rounded-br-[4px]'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='size-3'
-                  >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-                  </svg>
-                </button>
-              </div>
+              <QuantityController />
             </div>
             <div className='flex flex-wrap gap-3 py-2'>
               <button className='capitalize text-red-600 rounded-sm border-1 border-red-600 bg-[rgba(208,1,27,.08)] px-3 py-2 hover:cursor-pointer duration-200 hover:bg-red-600 hover:text-white text-base'>
