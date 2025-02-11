@@ -9,6 +9,7 @@ import Product from '../ProductList/components/Product'
 import QuantityController from '../../components/QuantityController'
 
 const ProductDetail = () => {
+  const [count, setCount] = useState(1)
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -35,8 +36,6 @@ const ProductDetail = () => {
     staleTime: 3 * 60 * 1000,
     enabled: Boolean(product)
   })
-
-  console.log(productByCategory)
 
   useEffect(() => {
     if (product && product.images.length) setCurrentImagesActive(product.images[0])
@@ -74,6 +73,8 @@ const ProductDetail = () => {
     const image = imageRef.current as HTMLImageElement
     image.removeAttribute('style')
   }
+
+  const handleBuyCount = (value: number) => setCount(value)
 
   if (!product) return null
   return (
@@ -164,7 +165,13 @@ const ProductDetail = () => {
               <span className='text-black font-semibold'> {formatNumberToSocicalStyle(product.sold)}</span>
             </div>
             <div className='py-2'>
-              <QuantityController />
+              <QuantityController
+                value={count}
+                max={product.quantity}
+                onIncrease={handleBuyCount}
+                onDecrease={handleBuyCount}
+                onType={handleBuyCount}
+              />
             </div>
             <div className='flex flex-wrap gap-3 py-2'>
               <button className='capitalize text-red-600 rounded-sm border-1 border-red-600 bg-[rgba(208,1,27,.08)] px-3 py-2 hover:cursor-pointer duration-200 hover:bg-red-600 hover:text-white text-base'>
