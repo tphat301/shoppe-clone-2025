@@ -1,15 +1,19 @@
 import DOMPurify from 'dompurify'
+import { toast } from 'react-toastify'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import productApi from '../../apis/product.api'
 import { Product as TypeProduct, ProductListConfig } from '../../types/product.type'
 import { discountPercent, formatNumberCurrency, formatNumberToSocicalStyle, getIdFromNameId } from '../../utils/utils'
 import Product from '../ProductList/components/Product'
 import QuantityController from '../../components/QuantityController'
+import purchaseApi from '../../apis/purchase.api'
+import { purchaseStatus } from '../../constants/purchase'
 
 const ProductDetail = () => {
-  const [count, setCount] = useState(1)
+  const queryClient = useQueryClient()
+  const [buyCount, setBuyCount] = useState(1)
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -74,7 +78,23 @@ const ProductDetail = () => {
     image.removeAttribute('style')
   }
 
-  const handleBuyCount = (value: number) => setCount(value)
+  const handleBuyCount = (value: number) => setBuyCount(value)
+
+  const addToCartMutation = useMutation({
+    mutationFn: purchaseApi.addToCart
+  })
+
+  const handleAddToCart = () => {
+    addToCartMutation.mutate(
+      { buy_count: buyCount, product_id: (product as TypeProduct)._id },
+      {
+        onSuccess: (data) => {
+          toast(data.data.message, { autoClose: 1000 })
+          queryClient.invalidateQueries({ queryKey: ['purchases', { status: purchaseStatus.cartIn }] })
+        }
+      }
+    )
+  }
 
   if (!product) return null
   return (
@@ -166,7 +186,7 @@ const ProductDetail = () => {
             </div>
             <div className='py-2'>
               <QuantityController
-                value={count}
+                value={buyCount}
                 max={product.quantity}
                 onIncrease={handleBuyCount}
                 onDecrease={handleBuyCount}
@@ -174,7 +194,10 @@ const ProductDetail = () => {
               />
             </div>
             <div className='flex flex-wrap gap-3 py-2'>
-              <button className='capitalize text-red-600 rounded-sm border-1 border-red-600 bg-[rgba(208,1,27,.08)] px-3 py-2 hover:cursor-pointer duration-200 hover:bg-red-600 hover:text-white text-base'>
+              <button
+                onClick={handleAddToCart}
+                className='capitalize text-red-600 rounded-sm border-1 border-red-600 bg-[rgba(208,1,27,.08)] px-3 py-2 hover:cursor-pointer duration-200 hover:bg-red-600 hover:text-white text-base'
+              >
                 Thêm vào giỏ hàng
               </button>
               <button className='capitalize text-red-600 rounded-sm border-1 border-red-600 bg-[rgba(208,1,27,.08)] px-3 py-2 hover:cursor-pointer duration-200 hover:bg-red-600 hover:text-white text-base'>

@@ -49,7 +49,7 @@ const AsideFilter = ({ categories, queryConfig }: Props) => {
     })
   }
   return (
-    <div className='sticky top-[10px]'>
+    <div className='sticky top-[110px]'>
       <Link
         to={path.home}
         className={classNames('capitalize py-2 flex text-base font-bold', {

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Fragment } from 'react/jsx-runtime'
 import InputNumber, { type InputNumberProps } from '../InputNumber'
 
@@ -10,19 +11,22 @@ interface Props extends InputNumberProps {
 }
 
 const QuantityController = ({ classNameWrap = 'mt-2', max, onIncrease, onDecrease, onType, value, ...rest }: Props) => {
+  const [localValue, setLocalValue] = useState<number>(Number(value || 0))
   const handleIncrease = () => {
-    let _value = Number(value) + 1
+    let _value = Number(value || localValue) + 1
     if (max !== undefined && _value > max) {
       _value = max
     }
     onIncrease && onIncrease(_value)
+    setLocalValue(_value)
   }
   const handleDecease = () => {
-    let _value = Number(value) - 1
+    let _value = Number(value || localValue) - 1
     if (_value < 1) {
       _value = 1
     }
     onDecrease && onDecrease(_value)
+    setLocalValue(_value)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +37,7 @@ const QuantityController = ({ classNameWrap = 'mt-2', max, onIncrease, onDecreas
       _value = 1
     }
     onType && onType(_value)
+    setLocalValue(_value)
   }
   return (
     <Fragment>
@@ -56,7 +61,7 @@ const QuantityController = ({ classNameWrap = 'mt-2', max, onIncrease, onDecreas
         <InputNumber
           className=''
           classNameInput='border-1 border-gray-300 outline-0 w-[50px] h-[30px] px-2 text-center'
-          value={value}
+          value={value || localValue}
           onChange={handleChange}
           {...rest}
         />

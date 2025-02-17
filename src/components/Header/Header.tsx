@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import Popover from '../Popover'
 import authApi from '../../apis/auth.api'
 import { AppContext } from '../../contexts/app.context'
@@ -11,7 +11,10 @@ import { useForm } from 'react-hook-form'
 import { SearchSchema, searchSchema } from '../../utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { omit } from 'lodash'
-
+import { purchaseStatus } from '../../constants/purchase'
+import purchaseApi from '../../apis/purchase.api'
+import { formatNumberCurrency } from '../../utils/utils'
+const MAX_PURCHASES = 5
 const Header = () => {
   const { register, handleSubmit } = useForm<SearchSchema>({
     defaultValues: {
@@ -31,6 +34,13 @@ const Header = () => {
       setProfile(null)
     }
   })
+
+  const { data: purchasesData } = useQuery({
+    queryKey: ['purchases', { status: purchaseStatus.cartIn }],
+    queryFn: () => purchaseApi.getPurchases({ status: purchaseStatus.cartIn })
+  })
+
+  const purchases = purchasesData?.data.data || []
 
   useEffect(() => {
     const headerHeight = (headerRef.current as HTMLElement).offsetHeight
@@ -193,57 +203,32 @@ const Header = () => {
             className='text-white w-[10%] flex items-center justify-center'
             renderPopover={
               <div className='p-2 max-w-[400px] bg-white'>
-                <div className='p-2'>
-                  <span className='text-gray-400 capitalize block mb-1'>Sản phẩm mới thêm</span>
-                  <div className='flex gap-2 my-3'>
-                    <div className='shrink-0 w-[50px] h-[50px]'>
-                      <img
-                        src='https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lvfgsjid1kkk1a@resize_w82_nl.webp'
-                        alt='Ảnh'
-                      />
+                {isAuthenticated && purchases ? (
+                  <div className='p-2'>
+                    <span className='text-gray-400 capitalize block mb-1'>Sản phẩm mới thêm</span>
+                    {purchases.slice(0, MAX_PURCHASES).map((purchase) => (
+                      <div key={purchase._id} className='flex gap-2 my-3'>
+                        <div className='shrink-0 w-[50px] h-[50px]'>
+                          <img src={purchase.product.image} alt='Ảnh' />
+                        </div>
+                        <p className='truncate'>{purchase.product.name}</p>
+                        <p className='text-red-500 text-xs'>{formatNumberCurrency(purchase.product.price)} ₫</p>
+                      </div>
+                    ))}
+                    <div className='flex items-center justify-between'>
+                      <span className='capitalize text-gray-400'>
+                        ({purchases.length > MAX_PURCHASES ? purchases.length - MAX_PURCHASES : 0}) Thêm hàng vào giỏ
+                      </span>
+                      <Link to='/' className='rounded-sm text-white bg-[#fb5533] p-2 capitalize hover:opacity-[90%]'>
+                        Xem giỏ hàng
+                      </Link>
                     </div>
-                    <p className='truncate'>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate est soluta sapiente temporibus
-                      quos dolor assumenda inventore repudiandae commodi voluptatibus minus saepe id, at magni officia
-                      adipisci corporis omnis animi?
-                    </p>
-                    <p className='text-red-500'>100.000đ</p>
                   </div>
-                  <div className='flex gap-2 my-3'>
-                    <div className='shrink-0 w-[50px] h-[50px]'>
-                      <img
-                        src='https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lvfgsjid1kkk1a@resize_w82_nl.webp'
-                        alt='Ảnh'
-                      />
-                    </div>
-                    <p className='truncate'>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate est soluta sapiente temporibus
-                      quos dolor assumenda inventore repudiandae commodi voluptatibus minus saepe id, at magni officia
-                      adipisci corporis omnis animi?
-                    </p>
-                    <p className='text-red-500'>100.000đ</p>
+                ) : (
+                  <div className='p-2'>
+                    <span className='block text-center text-red-500'>Giỏ hàng trống</span>
                   </div>
-                  <div className='flex gap-2 my-3'>
-                    <div className='shrink-0 w-[50px] h-[50px]'>
-                      <img
-                        src='https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lvfgsjid1kkk1a@resize_w82_nl.webp'
-                        alt='Ảnh'
-                      />
-                    </div>
-                    <p className='truncate'>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate est soluta sapiente temporibus
-                      quos dolor assumenda inventore repudiandae commodi voluptatibus minus saepe id, at magni officia
-                      adipisci corporis omnis animi?
-                    </p>
-                    <p className='text-red-500'>100.000đ</p>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <span className='capitalize text-gray-400'>(0) Thêm hàng vào giỏ</span>
-                    <Link to='/' className='rounded-sm text-white bg-[#fb5533] p-2 capitalize hover:opacity-[90%]'>
-                      Xem giỏ hàng
-                    </Link>
-                  </div>
-                </div>
+                )}
               </div>
             }
           >
