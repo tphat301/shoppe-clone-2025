@@ -44,7 +44,7 @@ const Header = () => {
     enabled: isAuthenticated
   })
 
-  const purchasesInCart = purchasesData?.data.data
+  const purchasesInCart = purchasesData?.data.data || []
 
   useEffect(() => {
     const headerHeight = (headerRef.current as HTMLElement).offsetHeight
@@ -207,7 +207,7 @@ const Header = () => {
             className='text-white w-[10%] flex items-center justify-center'
             renderPopover={
               <div className='p-2 max-w-[400px] bg-white'>
-                {purchasesInCart ? (
+                {purchasesInCart.length > 0 ? (
                   <div className='p-2'>
                     <span className='text-gray-400 capitalize block mb-1'>Sản phẩm mới thêm</span>
                     {purchasesInCart.slice(0, MAX_PURCHASES).map((purchase) => (

@@ -2,7 +2,7 @@ import DOMPurify from 'dompurify'
 import { toast } from 'react-toastify'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import productApi from '../../apis/product.api'
 import { Product as TypeProduct, ProductListConfig } from '../../types/product.type'
 import { discountPercent, formatNumberCurrency, formatNumberToSocicalStyle, getIdFromNameId } from '../../utils/utils'
@@ -10,8 +10,10 @@ import Product from '../ProductList/components/Product'
 import QuantityController from '../../components/QuantityController'
 import purchaseApi from '../../apis/purchase.api'
 import { purchaseStatus } from '../../constants/purchase'
+import { path } from '../../constants/path'
 
 const ProductDetail = () => {
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [buyCount, setBuyCount] = useState(1)
   const { nameId } = useParams()
@@ -94,6 +96,19 @@ const ProductDetail = () => {
         }
       }
     )
+  }
+
+  const handleBuyNow = async () => {
+    const respone = await addToCartMutation.mutateAsync({
+      buy_count: buyCount,
+      product_id: (product as TypeProduct)._id
+    })
+    const purchase = respone.data.data
+    navigate(path.cart, {
+      state: {
+        purchaseId: purchase._id
+      }
+    })
   }
 
   if (!product) return null
@@ -201,7 +216,10 @@ const ProductDetail = () => {
               >
                 Thêm vào giỏ hàng
               </button>
-              <button className='capitalize text-red-600 rounded-sm border-1 border-red-600 bg-[rgba(208,1,27,.08)] px-3 py-2 hover:cursor-pointer duration-200 hover:bg-red-600 hover:text-white text-base'>
+              <button
+                onClick={handleBuyNow}
+                className='capitalize text-red-600 rounded-sm border-1 border-red-600 bg-[rgba(208,1,27,.08)] px-3 py-2 hover:cursor-pointer duration-200 hover:bg-red-600 hover:text-white text-base'
+              >
                 Mua ngay
               </button>
             </div>
