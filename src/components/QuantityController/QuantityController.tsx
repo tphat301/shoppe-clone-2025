@@ -41,7 +41,6 @@ const QuantityController = ({ classNameWrap = 'mt-2', max, onIncrease, onDecreas
   }
   return (
     <Fragment>
-      Số lượng:
       <div className={'flex items-center ' + classNameWrap}>
         <button
           className='px-2 border-1 border-gray-300 border-r-0 flex justify-center items-center hover:cursor-pointer h-[30px] rounded-tl-[4px] rounded-bl-[4px]'

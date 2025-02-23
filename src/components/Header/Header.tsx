@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Popover from '../Popover'
@@ -44,7 +44,7 @@ const Header = () => {
     enabled: isAuthenticated
   })
 
-  const purchases = purchasesData?.data.data
+  const purchasesInCart = purchasesData?.data.data
 
   useEffect(() => {
     const headerHeight = (headerRef.current as HTMLElement).offsetHeight
@@ -207,10 +207,10 @@ const Header = () => {
             className='text-white w-[10%] flex items-center justify-center'
             renderPopover={
               <div className='p-2 max-w-[400px] bg-white'>
-                {purchases ? (
+                {purchasesInCart ? (
                   <div className='p-2'>
                     <span className='text-gray-400 capitalize block mb-1'>Sản phẩm mới thêm</span>
-                    {purchases.slice(0, MAX_PURCHASES).map((purchase) => (
+                    {purchasesInCart.slice(0, MAX_PURCHASES).map((purchase) => (
                       <div key={purchase._id} className='flex gap-2 my-3'>
                         <div className='shrink-0 w-[50px] h-[50px]'>
                           <img src={purchase.product.image} alt='Ảnh' />
@@ -221,7 +221,8 @@ const Header = () => {
                     ))}
                     <div className='flex items-center justify-between'>
                       <span className='capitalize text-gray-400'>
-                        ({purchases.length > MAX_PURCHASES ? purchases.length - MAX_PURCHASES : 0}) Thêm hàng vào giỏ
+                        ({purchasesInCart.length > MAX_PURCHASES ? purchasesInCart.length - MAX_PURCHASES : 0}) Thêm
+                        hàng vào giỏ
                       </span>
                       <Link
                         to={path.cart}
@@ -239,7 +240,7 @@ const Header = () => {
               </div>
             }
           >
-            <Link to='/' className='hover:cursor-pointer relative'>
+            <Link to='/' className='hover:cursor-pointer relative z-20'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
@@ -254,9 +255,9 @@ const Header = () => {
                   d='M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z'
                 />
               </svg>
-              {isAuthenticated && purchases && (
+              {isAuthenticated && purchasesInCart && (
                 <span className='absolute bottom-[54%] -right-[10px] bg-white text-black flex justify-center items-center rounded-2xl text-xs px-1.75 py-0 shadow'>
-                  {purchases.length}
+                  {purchasesInCart.length}
                 </span>
               )}
             </Link>

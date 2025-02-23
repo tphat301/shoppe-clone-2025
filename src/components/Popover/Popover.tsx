@@ -44,7 +44,8 @@ const Popover = ({
                 position: strategy,
                 top: y ?? 0,
                 left: x ?? 0,
-                transformOrigin: `${middlewareData.arrow?.x}px top`
+                transformOrigin: `${middlewareData.arrow?.x}px top`,
+                zIndex: 99
               }}
               initial={{
                 opacity: 0,

@@ -185,6 +185,7 @@ const ProductDetail = () => {
               <span className='text-black font-semibold'> {formatNumberToSocicalStyle(product.sold)}</span>
             </div>
             <div className='py-2'>
+              Số lượng:
               <QuantityController
                 value={buyCount}
                 max={product.quantity}
