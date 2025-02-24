@@ -33,6 +33,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const reset = () => {
     setIsAuthenticated(false)
     setProfile(null)
+    setExtendedPurchase([])
   }
   return (
     <AppContext.Provider
