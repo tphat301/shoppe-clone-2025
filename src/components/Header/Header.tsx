@@ -130,7 +130,7 @@ const Header = () => {
                   <Link to={path.profile} className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>
                     Tài khoản của tôi
                   </Link>
-                  <Link to='/' className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>
+                  <Link to={path.historyPurchase} className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>
                     Đơn mua
                   </Link>
                   <button

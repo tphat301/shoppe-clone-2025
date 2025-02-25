@@ -2,15 +2,10 @@ import { Outlet } from 'react-router-dom'
 import Footer from '../../components/Footer'
 import Header from '../../components/Header'
 
-interface Props {
-  children?: React.ReactNode
-}
-
-const MainLayout = ({ children }: Props) => {
+const MainLayout = () => {
   return (
     <div>
       <Header />
-      {children}
       <Outlet />
       <Footer />
     </div>
