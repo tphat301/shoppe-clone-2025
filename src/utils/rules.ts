@@ -97,6 +97,18 @@ export const schema = yup.object({
   }),
   name: yup.string().trim().required()
 })
+
+export const userSchema = yup.object({
+  name: yup.string().max(160, 'Độ dài tối đa 160 ký tự'),
+  avatar: yup.string().max(1000, 'Độ dài tối đa 1000 ký tự'),
+  phone: yup.string().max(20, 'Độ dài tối đa 20 ký tự'),
+  address: yup.string().max(160, 'Độ dài tối đa 160 ký tự'),
+  date_of_birth: yup.date().max(new Date(), 'Hãy chọn một ngày trong quá khứ'),
+  password: schema.fields['password'],
+  new_password: schema.fields['password'],
+  confirm_password: schema.fields['confirm_password']
+})
+
 export type Schema = Omit<yup.InferType<typeof schema>, 'price_max' | 'price_min'>
 export const loginSchema = schema.pick(['email', 'password'])
 export type LoginSchema = Pick<yup.InferType<typeof loginSchema>, 'email' | 'password'>
@@ -105,3 +117,4 @@ export type PriceSchema = NoUndefinedField<yup.InferType<typeof priceSchema>>
 export const searchSchema = schema.pick(['name'])
 export type SearchSchema = Pick<yup.InferType<typeof searchSchema>, 'name'>
 export default getRules
+export type UserSchema = yup.InferType<typeof userSchema>

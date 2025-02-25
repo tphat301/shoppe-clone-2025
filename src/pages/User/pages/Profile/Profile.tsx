@@ -1,3 +1,4 @@
+import Button from '../../../../components/Button'
 import Input from '../../../../components/Input'
 
 const Profile = () => {
@@ -7,8 +8,8 @@ const Profile = () => {
         <h1 className='text-lg capitalize text-gray-900 font-normal'>Hồ Sơ Của Tôi</h1>
         <span className='mt-1 block text-sm text-gray-700'>Quản lý thông tin hồ sơ để bảo mật tài khoản</span>
       </div>
-      <div className='mt-8 flex flex-col-reverse md:flex-row md:items-start'>
-        <form className='mt-6 grow pr-0 md:pr-12 md:mt-0'>
+      <form className='mt-8 flex flex-col-reverse md:flex-row md:items-start'>
+        <div className='mt-6 grow pr-0 md:pr-12 md:mt-0'>
           <div className='flex flex-wrap'>
             <div className='w-full md:w-[20%] truncate pt-3 text-start md:text-right capitalize'>Email</div>
             <div className='pl-0 w-full md:w-[80%] md:pl-5'>
@@ -58,7 +59,15 @@ const Profile = () => {
               </div>
             </div>
           </div>
-        </form>
+          <div className='mt-2 md:mt-4 flex flex-wrap'>
+            <div className='w-full md:w-[20%] truncate pt-3 text-start md:text-right capitalize' />
+            <div className='pl-0 w-full md:w-[80%] md:pl-5'>
+              <Button className='flex h-9 items-center bg-red-500 px-5 text-center text-sm text-white hover:bg-red-500/80 hover:cursor-pointer'>
+                Lưu lại
+              </Button>
+            </div>
+          </div>
+        </div>
         <div className='flex justify-center md:w-72 md:border-l md:border-l-gray-200'>
           <div className='flex flex-col items-center'>
             <div className='my-5 h-24 w-24'>
@@ -72,7 +81,7 @@ const Profile = () => {
             <div className='mt-1 text-gray-400'>Định dạng: .JPG, .JPEG, .PNG</div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   )
 }
