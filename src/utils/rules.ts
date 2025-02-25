@@ -117,4 +117,5 @@ export type PriceSchema = NoUndefinedField<yup.InferType<typeof priceSchema>>
 export const searchSchema = schema.pick(['name'])
 export type SearchSchema = Pick<yup.InferType<typeof searchSchema>, 'name'>
 export default getRules
+
 export type UserSchema = yup.InferType<typeof userSchema>
