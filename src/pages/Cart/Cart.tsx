@@ -77,7 +77,7 @@ const Cart = () => {
         }) || []
       )
     })
-  }, [purchasesInCart, choosenPurchaseIdFromLocation])
+  }, [purchasesInCart, choosenPurchaseIdFromLocation, setExtendedPurchase])
 
   useEffect(() => {
     return () => {

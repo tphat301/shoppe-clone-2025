@@ -1,7 +1,6 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
 import { useContext } from 'react'
 import ProductList from '../pages/ProductList'
-import Login from '../pages/Login'
 import Register from '../pages/Register'
 import RegisterLayout from '../layouts/RegisterLayout'
 import MainLayout from '../layouts/MainLayout'
@@ -13,6 +12,7 @@ import UserLayout from '../pages/User/layouts/UserLayout'
 import Profile from '../pages/User/pages/Profile'
 import HistoryPurchase from '../pages/User/pages/HistoryPurchase'
 import ChangePassword from '../pages/User/pages/ChangePassword'
+import Login from '../pages/Login'
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute = () => {

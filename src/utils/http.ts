@@ -4,6 +4,7 @@ import { httpStatusCode } from '../constants/httpStatusCode'
 import { path } from '../constants/path'
 import { AuthResponse } from '../types/auth.type'
 import { clearLS, getAccessTokenFromLS, setAccessTokenToLS, setProfileToLS } from './auth'
+import config from '../constants/config'
 
 class Http {
   instance: AxiosInstance
@@ -11,7 +12,7 @@ class Http {
   constructor() {
     this.accessToken = getAccessTokenFromLS() || ''
     this.instance = axios.create({
-      baseURL: 'https://api-ecom.duthanhduoc.com/',
+      baseURL: config.baseUrl,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json'

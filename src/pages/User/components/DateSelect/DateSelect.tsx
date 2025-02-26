@@ -1,5 +1,5 @@
 import { range } from 'lodash'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 interface Props {
   onChange?: (value: Date) => void
   value?: Date
@@ -12,13 +12,27 @@ const DateSelect = ({ onChange, value, errorMessage }: Props) => {
     month: value?.getMonth() || 0,
     year: value?.getFullYear() || 1990
   })
+
+  useEffect(() => {
+    if (value) {
+      setDate({
+        date: value.getDate(),
+        month: value.getMonth(),
+        year: value.getFullYear()
+      })
+    }
+  }, [value])
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value, name } = e.target
+    const { value: valueFormSelect, name } = e.target
     const newDate = {
-      ...date,
-      [name]: value
+      date: value?.getDate() || date.date,
+      month: value?.getMonth() || date.month,
+      year: value?.getFullYear() || date.year,
+      [name]: Number(valueFormSelect)
     }
     setDate(newDate)
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     onChange && onChange(new Date(newDate.year, newDate.month, newDate.date))
   }
   return (
