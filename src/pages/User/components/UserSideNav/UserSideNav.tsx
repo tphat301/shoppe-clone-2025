@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { path } from '../../../../constants/path'
 import { useContext } from 'react'
 import { AppContext } from '../../../../contexts/app.context'
 import { getAvatarUrl } from '../../../../utils/utils'
+import classNames from 'classnames'
 const UserSideNav = () => {
   const { profile } = useContext(AppContext)
   return (
@@ -34,7 +35,15 @@ const UserSideNav = () => {
         </div>
       </div>
       <div className='mt-7'>
-        <Link to={path.profile} className='flex items-center capitalize text-red-500 transition-colors'>
+        <NavLink
+          to={path.profile}
+          className={({ isActive }) =>
+            classNames('flex items-center capitalize transition-colors', {
+              'text-red-500': isActive,
+              'text-gray-600': !isActive
+            })
+          }
+        >
           <div className='mr-2 flex items-center justify-center h-[22px] w-[22px]'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -52,8 +61,16 @@ const UserSideNav = () => {
             </svg>
           </div>
           Tài Khoản Của Tôi
-        </Link>
-        <Link to={path.changePassword} className='mt-4 flex items-center capitalize text-gray-600 transition-colors'>
+        </NavLink>
+        <NavLink
+          to={path.changePassword}
+          className={({ isActive }) =>
+            classNames('flex items-center mt-4 capitalize transition-colors', {
+              'text-red-500': isActive,
+              'text-gray-600': !isActive
+            })
+          }
+        >
           <div className='mr-2 flex items-center justify-center h-[22px] w-[22px]'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -71,8 +88,16 @@ const UserSideNav = () => {
             </svg>
           </div>
           Đổi Mật Khẩu
-        </Link>
-        <Link to={path.historyPurchase} className='mt-4 flex items-center capitalize text-gray-600 transition-colors'>
+        </NavLink>
+        <NavLink
+          to={path.historyPurchase}
+          className={({ isActive }) =>
+            classNames('flex items-center mt-4 capitalize transition-colors', {
+              'text-red-500': isActive,
+              'text-gray-600': !isActive
+            })
+          }
+        >
           <div className='mr-2 flex items-center justify-center h-[22px] w-[22px]'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -90,7 +115,7 @@ const UserSideNav = () => {
             </svg>
           </div>
           Đơn Mua
-        </Link>
+        </NavLink>
       </div>
     </div>
   )

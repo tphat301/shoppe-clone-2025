@@ -6,18 +6,18 @@ import { useForm, Controller } from 'react-hook-form'
 import { UserSchema, userSchema } from '../../../../utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import InputNumber from '../../../../components/InputNumber'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import DateSelect from '../../components/DateSelect'
 import { toast } from 'react-toastify'
 import { AppContext } from '../../../../contexts/app.context'
 import { setProfileToLS } from '../../../../utils/auth'
 import { getAvatarUrl } from '../../../../utils/utils'
+import InputFile from '../../../../components/InputFile'
 
 type ProfileSchema = Pick<UserSchema, 'name' | 'phone' | 'address' | 'date_of_birth' | 'avatar'>
 const profileSchema = userSchema.pick(['name', 'phone', 'address', 'date_of_birth', 'avatar'])
 
 const Profile = () => {
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const { setProfile } = useContext(AppContext)
   const [file, setFile] = useState<File>()
   const previewImage = useMemo(() => {
@@ -66,7 +66,6 @@ const Profile = () => {
       if (file) {
         const form = new FormData()
         form.append('image', file)
-        console.log(form)
         const uploadRes = await uploadAvatarMutation.mutateAsync(form)
         avatarName = uploadRes.data.data
         setValue('avatar', avatarName)
@@ -85,13 +84,8 @@ const Profile = () => {
     }
   })
 
-  const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+  const handleChangeFile = (file?: File) => {
     setFile(file)
-  }
-
-  const handleUpload = () => {
-    fileInputRef.current?.click()
   }
 
   return (
@@ -186,20 +180,7 @@ const Profile = () => {
                 alt=''
               />
             </div>
-            <input
-              type='file'
-              ref={fileInputRef}
-              className='hidden'
-              accept='.jpg,.jpeg,.png'
-              onChange={handleChangeFile}
-            />
-            <button
-              className='flex h-10 items-center justify-end border border-gray-400 bg-white px-6 text-sm shadow-sm text-gray-600 hover:cursor-pointer'
-              type='button'
-              onClick={handleUpload}
-            >
-              Chọn Ảnh
-            </button>
+            <InputFile onChange={handleChangeFile} />
             <div className='mt-3 text-gray-400'>Dung lượng tối đa 1 MB</div>
             <div className='mt-1 text-gray-400'>Định dạng: .JPG, .JPEG, .PNG</div>
           </div>
