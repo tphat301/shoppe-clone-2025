@@ -67,6 +67,15 @@ function testPrice(this: yup.TestContext<yup.AnyObject>) {
   return price_min !== '' || price_max !== ''
 }
 
+function handleConfirmPasswordYup(field: string) {
+  return yup
+    .string()
+    .required('Xác nhận mật khẩu là bắt buộc')
+    .min(6, 'Xác nhận mật khẩu phải nhập tối thiểu 6 ký tự')
+    .max(160, 'Xác nhận mật khẩu chỉ cho phép nhập tối đa 160 ký tự')
+    .oneOf([yup.ref(field)], 'Xác nhận mật khẩu không khớp')
+}
+
 export const schema = yup.object({
   email: yup
     .string()
@@ -79,12 +88,7 @@ export const schema = yup.object({
     .required('Mật khẩu là bắt buộc')
     .min(6, 'Mật khẩu phải nhập tối thiểu 6 ký tự')
     .max(160, 'Mật khẩu chỉ cho phép nhập tối đa 160 ký tự'),
-  confirm_password: yup
-    .string()
-    .required('Xác nhận mật khẩu là bắt buộc')
-    .min(6, 'Xác nhận mật khẩu phải nhập tối thiểu 6 ký tự')
-    .max(160, 'Xác nhận mật khẩu chỉ cho phép nhập tối đa 160 ký tự')
-    .oneOf([yup.ref('password')], 'Xác nhận mật khẩu không khớp'),
+  confirm_password: handleConfirmPasswordYup('password'),
   price_min: yup.string().default('').test({
     name: 'price-not-allow',
     message: 'Giá không phù hợp',
@@ -104,9 +108,9 @@ export const userSchema = yup.object({
   phone: yup.string().max(20, 'Độ dài tối đa 20 ký tự'),
   address: yup.string().max(160, 'Độ dài tối đa 160 ký tự'),
   date_of_birth: yup.date().max(new Date(), 'Hãy chọn một ngày trong quá khứ'),
-  password: schema.fields['password'],
-  new_password: schema.fields['password'],
-  confirm_password: schema.fields['confirm_password']
+  password: schema.fields['password'] as yup.StringSchema<string | undefined, yup.AnyObject, undefined, ''>,
+  new_password: schema.fields['password'] as yup.StringSchema<string | undefined, yup.AnyObject, undefined, ''>,
+  confirm_password: handleConfirmPasswordYup('new_password')
 })
 
 export type Schema = Omit<yup.InferType<typeof schema>, 'price_max' | 'price_min'>
@@ -119,3 +123,7 @@ export type SearchSchema = Pick<yup.InferType<typeof searchSchema>, 'name'>
 export default getRules
 
 export type UserSchema = yup.InferType<typeof userSchema>
+export type ProfileSchema = Pick<UserSchema, 'name' | 'phone' | 'address' | 'date_of_birth' | 'avatar'>
+export const profileSchema = userSchema.pick(['name', 'phone', 'address', 'date_of_birth', 'avatar'])
+export type ChangePasswordSchema = Pick<UserSchema, 'password' | 'new_password' | 'confirm_password'>
+export const changePasswordSchema = userSchema.pick(['password', 'new_password', 'confirm_password'])
