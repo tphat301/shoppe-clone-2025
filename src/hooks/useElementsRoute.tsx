@@ -1,18 +1,20 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
-import { useContext } from 'react'
-import ProductList from '../pages/ProductList'
-import Register from '../pages/Register'
+import { useContext, lazy, Suspense } from 'react'
 import RegisterLayout from '../layouts/RegisterLayout'
 import MainLayout from '../layouts/MainLayout'
 import { path } from '../constants/path'
 import { AppContext } from '../contexts/app.context'
-import ProductDetail from '../pages/ProductDetail'
-import Cart from '../pages/Cart'
 import UserLayout from '../pages/User/layouts/UserLayout'
-import Profile from '../pages/User/pages/Profile'
-import HistoryPurchase from '../pages/User/pages/HistoryPurchase'
-import ChangePassword from '../pages/User/pages/ChangePassword'
-import Login from '../pages/Login'
+
+const ProductList = lazy(() => import('../pages/ProductList'))
+const Cart = lazy(() => import('../pages/Cart'))
+const Profile = lazy(() => import('../pages/User/pages/Profile'))
+const HistoryPurchase = lazy(() => import('../pages/User/pages/HistoryPurchase'))
+const ChangePassword = lazy(() => import('../pages/User/pages/ChangePassword'))
+const ProductDetail = lazy(() => import('../pages/ProductDetail'))
+const NotFound = lazy(() => import('../pages/NotFound'))
+const Login = lazy(() => import('../pages/Login'))
+const Register = lazy(() => import('../pages/Register'))
 
 // eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute = () => {
@@ -34,7 +36,11 @@ const useElementsRoute = () => {
         {
           path: '',
           index: true,
-          element: <ProductList />
+          element: (
+            <Suspense>
+              <ProductList />
+            </Suspense>
+          )
         }
       ]
     },
@@ -44,7 +50,11 @@ const useElementsRoute = () => {
       children: [
         {
           path: '',
-          element: <ProductDetail />
+          element: (
+            <Suspense>
+              <ProductDetail />
+            </Suspense>
+          )
         }
       ]
     },
@@ -62,15 +72,27 @@ const useElementsRoute = () => {
               children: [
                 {
                   path: path.profile,
-                  element: <Profile />
+                  element: (
+                    <Suspense>
+                      <Profile />
+                    </Suspense>
+                  )
                 },
                 {
                   path: path.historyPurchase,
-                  element: <HistoryPurchase />
+                  element: (
+                    <Suspense>
+                      <HistoryPurchase />
+                    </Suspense>
+                  )
                 },
                 {
                   path: path.changePassword,
-                  element: <ChangePassword />
+                  element: (
+                    <Suspense>
+                      <ChangePassword />
+                    </Suspense>
+                  )
                 }
               ]
             }
@@ -82,7 +104,11 @@ const useElementsRoute = () => {
           children: [
             {
               path: '',
-              element: <Cart />
+              element: (
+                <Suspense>
+                  <Cart />
+                </Suspense>
+              )
             }
           ]
         }
@@ -98,13 +124,36 @@ const useElementsRoute = () => {
           children: [
             {
               path: path.login,
-              element: <Login />
+              element: (
+                <Suspense>
+                  <Login />
+                </Suspense>
+              )
             },
             {
               path: path.register,
-              element: <Register />
+              element: (
+                <Suspense>
+                  <Register />
+                </Suspense>
+              )
             }
           ]
+        }
+      ]
+    },
+    {
+      path: '',
+      element: <MainLayout />,
+      children: [
+        {
+          path: '*',
+          element: (
+            <Suspense>
+              {' '}
+              <NotFound />
+            </Suspense>
+          )
         }
       ]
     }
