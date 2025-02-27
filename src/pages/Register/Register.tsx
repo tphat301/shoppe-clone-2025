@@ -65,31 +65,39 @@ const Register = () => {
             <h2 className='ssm:text-xl lg:text-2xl text-[#222] lg:mb-6 ssm:mb-3 lg:text-left ssm:text-center capitalize'>
               Đăng ký tài khoản
             </h2>
+            <label htmlFor='email' className='block mb-2 text-sm font-medium text-gray-900'>
+              Email
+            </label>
             <Input
               name='email'
               type='email'
-              label='Email'
               placeholder='Email'
               register={register}
               errorMessage={errors?.email?.message as string}
             />
+            <label htmlFor='password' className='block mb-2 text-sm font-medium text-gray-900'>
+              Mật khẩu
+            </label>
             <Input
               name='password'
               type='password'
-              label='Mật khẩu'
               placeholder='Mật khẩu'
               register={register}
               errorMessage={errors?.password?.message as string}
               autoComplete='on'
+              className='ssm:mb-0 lg:mb-1 ssm:min-h-[63px] relative'
             />
+            <label htmlFor='confirm_password' className='block mb-2 text-sm font-medium text-gray-900'>
+              Xác nhận mật khẩu
+            </label>
             <Input
               name='confirm_password'
               type='password'
-              label='Xác nhận mật khẩu'
               placeholder='Xác nhận mật khẩu'
               register={register}
               errorMessage={errors?.confirm_password?.message as string}
               autoComplete='on'
+              className='ssm:mb-0 lg:mb-1 ssm:min-h-[63px] relative'
             />
             <Button isLoading={registerMutation.isPending} disabled={registerMutation.isPending}>
               Đăng Ký

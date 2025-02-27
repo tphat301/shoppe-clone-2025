@@ -64,7 +64,7 @@ const ChangePassword = () => {
                 name='password'
                 type='password'
                 classNameInput='bg-white border-[rgba(0,0,0,.14)] border-solid border-1 text-gray-900 text-sm focus:ring-[#ee4d2d] focus:border-[#ee4d2d] block w-full px-3 py-2 outline-0'
-                className='ssm:mb-0 lg:mb-0 ssm:min-h-[auto]'
+                className='ssm:mb-0 lg:mb-0 ssm:min-h-[auto] relative'
                 placeholder='Mật khẩu'
                 register={register}
                 errorMessage={errors.password?.message}
@@ -78,7 +78,7 @@ const ChangePassword = () => {
                 name='new_password'
                 type='password'
                 classNameInput='bg-white border-[rgba(0,0,0,.14)] border-solid border-1 text-gray-900 text-sm focus:ring-[#ee4d2d] focus:border-[#ee4d2d] block w-full px-3 py-2 outline-0'
-                className='ssm:mb-0 lg:mb-0 ssm:min-h-[auto]'
+                className='ssm:mb-0 lg:mb-0 ssm:min-h-[auto] relative'
                 placeholder='Mật khẩu mới'
                 register={register}
                 errorMessage={errors.new_password?.message}
@@ -94,7 +94,7 @@ const ChangePassword = () => {
                 name='confirm_password'
                 type='password'
                 classNameInput='bg-white border-[rgba(0,0,0,.14)] border-solid border-1 text-gray-900 text-sm focus:ring-[#ee4d2d] focus:border-[#ee4d2d] block w-full px-3 py-2 outline-0'
-                className='ssm:mb-0 lg:mb-0 ssm:min-h-[auto]'
+                className='ssm:mb-0 lg:mb-0 ssm:min-h-[auto] relative'
                 placeholder='Xác nhận mật khẩu mới'
                 register={register}
                 errorMessage={errors.confirm_password?.message}
