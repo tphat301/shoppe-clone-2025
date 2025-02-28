@@ -9,7 +9,7 @@ import Input from '../../components/Input'
 import DescriptionForm from '../../components/DescriptionForm/DescriptionForm'
 import { path } from '../../constants/path'
 import authApi from '../../apis/auth.api'
-import { isAxiosUnprocessableEntity } from '../../utils/utils'
+import { isAxiosUnprocessableEntityError } from '../../utils/utils'
 import { ErrorResponseApi } from '../../types/utils.type'
 import { AppContext } from '../../contexts/app.context'
 import Button from '../../components/Button'
@@ -40,7 +40,7 @@ const Register = () => {
         navigate(path.home)
       },
       onError: (error) => {
-        if (isAxiosUnprocessableEntity<TypeIsAxiosUnprocessableEntity>(error)) {
+        if (isAxiosUnprocessableEntityError<TypeIsAxiosUnprocessableEntity>(error)) {
           const formError = error.response?.data?.data
           if (formError) {
             Object.keys(formError).forEach((key) => {

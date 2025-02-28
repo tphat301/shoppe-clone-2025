@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import useApi from '../../../../apis/user.api'
 import Button from '../../../../components/Button'
 import Input from '../../../../components/Input'
-import { isAxiosUnprocessableEntity } from '../../../../utils/utils'
+import { isAxiosUnprocessableEntityError } from '../../../../utils/utils'
 import { ErrorResponseApi } from '../../../../types/utils.type'
 import { changePasswordSchema, ChangePasswordSchema } from '../../../../utils/rules'
 
@@ -35,7 +35,7 @@ const ChangePassword = () => {
       toast.success(res.data.message, { autoClose: 1000 })
       reset()
     } catch (error) {
-      if (isAxiosUnprocessableEntity<ErrorResponseApi<ChangePasswordSchema>>(error)) {
+      if (isAxiosUnprocessableEntityError<ErrorResponseApi<ChangePasswordSchema>>(error)) {
         const formError = error.response?.data?.data
         if (formError) {
           Object.keys(formError).forEach((key) => {

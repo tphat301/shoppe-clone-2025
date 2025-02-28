@@ -10,7 +10,7 @@ import DateSelect from '../../components/DateSelect'
 import { toast } from 'react-toastify'
 import { AppContext } from '../../../../contexts/app.context'
 import { setProfileToLS } from '../../../../utils/auth'
-import { getAvatarUrl, isAxiosUnprocessableEntity } from '../../../../utils/utils'
+import { getAvatarUrl, isAxiosUnprocessableEntityError } from '../../../../utils/utils'
 import InputFile from '../../../../components/InputFile'
 import InputInfo from '../../components/InputInfo'
 import { ErrorResponseApi } from '../../../../types/utils.type'
@@ -84,7 +84,7 @@ const Profile = () => {
       setProfileToLS(res.data.data)
       toast.success(res.data.message, { autoClose: 1000 })
     } catch (error) {
-      if (isAxiosUnprocessableEntity<ErrorResponseApi<FormDataError>>(error)) {
+      if (isAxiosUnprocessableEntityError<ErrorResponseApi<FormDataError>>(error)) {
         const formError = error.response?.data?.data
         if (formError) {
           Object.keys(formError).forEach((key) => {

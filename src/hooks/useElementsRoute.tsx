@@ -150,7 +150,6 @@ const useElementsRoute = () => {
           path: '*',
           element: (
             <Suspense>
-              {' '}
               <NotFound />
             </Suspense>
           )
