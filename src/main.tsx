@@ -8,6 +8,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { AppProvider } from './contexts/app.context.tsx'
 import { ErrorBoundary } from 'react-error-boundary'
 import ErrorFallback from './components/ErrorFallback/ErrorFallback.tsx'
+import './i18n/i18n.ts'
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -10,12 +10,14 @@ import InputNumber from '../../../../components/InputNumber'
 import { PriceSchema, priceSchema } from '../../../../utils/rules'
 import RatingFilter from '../RatingFilter'
 import { omit } from 'lodash'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   categories: Category[]
   queryConfig: QueryConfig
 }
 const AsideFilter = ({ categories, queryConfig }: Props) => {
+  const { t } = useTranslation('home')
   const { category } = queryConfig
   const navigate = useNavigate()
   const {
@@ -57,7 +59,7 @@ const AsideFilter = ({ categories, queryConfig }: Props) => {
         })}
         title='Tất cả danh mục'
       >
-        Tất cả danh mục
+        {t('category.all category')}
       </Link>
       <div className='bg-gray-300 h-[1px] w-full' />
       <ul>

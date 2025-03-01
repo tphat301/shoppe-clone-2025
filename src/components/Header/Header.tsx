@@ -14,9 +14,14 @@ import { omit } from 'lodash'
 import { purchaseStatus } from '../../constants/purchase'
 import purchaseApi from '../../apis/purchase.api'
 import { formatNumberCurrency } from '../../utils/utils'
+import { useTranslation } from 'react-i18next'
+import { locales } from '../../i18n/i18n'
+
 const MAX_PURCHASES = 5
 
 const Header = () => {
+  const { i18n } = useTranslation()
+  const nameLang = locales[i18n.language as keyof typeof locales]
   const queryClient = useQueryClient()
   const { register, handleSubmit } = useForm<SearchSchema>({
     defaultValues: {
@@ -77,6 +82,10 @@ const Header = () => {
       search: createSearchParams(config).toString()
     })
   })
+
+  const handleChangeLanguage = (lang: 'vi' | 'en') => () => {
+    i18n.changeLanguage(lang)
+  }
   return (
     <header
       ref={headerRef}
@@ -91,8 +100,18 @@ const Header = () => {
             className='flex items-center gap-1 hover:cursor-pointer text-white'
             renderPopover={
               <div className='flex flex-col py-2 px-3'>
-                <button className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'>Tiếng Việt</button>
-                <button className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'>Tiếng Anh</button>
+                <button
+                  className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer'
+                  onClick={handleChangeLanguage('vi')}
+                >
+                  Tiếng Việt
+                </button>
+                <button
+                  className='py-2 px-3 hover:text-orange-600 hover:cursor-pointer mt-1'
+                  onClick={handleChangeLanguage('en')}
+                >
+                  Tiếng Anh
+                </button>
               </div>
             }
           >
@@ -110,7 +129,7 @@ const Header = () => {
                 d='M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418'
               />
             </svg>
-            <span className='capitalize'>Tiếng việt</span>
+            <span className='capitalize'>{nameLang}</span>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'

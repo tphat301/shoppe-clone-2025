@@ -11,8 +11,10 @@ import QuantityController from '../../components/QuantityController'
 import purchaseApi from '../../apis/purchase.api'
 import { purchaseStatus } from '../../constants/purchase'
 import { path } from '../../constants/path'
+import { useTranslation } from 'react-i18next'
 
 const ProductDetail = () => {
+  const { t } = useTranslation('product')
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [buyCount, setBuyCount] = useState(1)
@@ -192,8 +194,7 @@ const ProductDetail = () => {
               </span>
             </div>
             <div className='py-2 text-base'>
-              Sản phẩm có sẵn:
-              <span className='text-black font-semibold'> {product.quantity}</span>
+              {t('product available')}:<span className='text-black font-semibold'> {product.quantity}</span>
             </div>
             <div className='py-2 text-base'>
               Đã bán:
