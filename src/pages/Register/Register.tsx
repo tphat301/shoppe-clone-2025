@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useContext } from 'react'
+import { Fragment, useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { omit } from 'lodash'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -13,6 +13,7 @@ import { isAxiosUnprocessableEntityError } from '../../utils/utils'
 import { ErrorResponseApi } from '../../types/utils.type'
 import { AppContext } from '../../contexts/app.context'
 import Button from '../../components/Button'
+import { Helmet } from 'react-helmet-async'
 
 type FormData = Schema
 type TypeBody = Omit<FormData, 'confirm_password'>
@@ -55,58 +56,64 @@ const Register = () => {
     })
   })
   return (
-    <div className='bg-[rgb(238,77,45)]'>
-      <div className='wrap-content lg:py-20 ssm:py-10'>
-        <div className='lg:flex lg:items-center lg:max-w-[1040px] ssm:max-w-[1200px] lg:h-[600px] ssm:h-full lg:bg-[url("https://down-vn.img.susercontent.com/file/sg-11134004-7ra0r-m4re2su1gpxufa")] lg:bg-contain lg:bg-no-repeat lg:bg-center'>
-          <form
-            className='bg-white lg:p-8 ssm:py-6 ssm:px-4 rounded-[4px] lg:w-[40%] ml-auto'
-            onSubmit={handleSubmitForm}
-          >
-            <h2 className='ssm:text-xl lg:text-2xl text-[#222] lg:mb-6 ssm:mb-3 lg:text-left ssm:text-center capitalize'>
-              Đăng ký tài khoản
-            </h2>
-            <label htmlFor='email' className='block mb-2 text-sm font-medium text-gray-900'>
-              Email
-            </label>
-            <Input
-              name='email'
-              type='email'
-              placeholder='Email'
-              register={register}
-              errorMessage={errors?.email?.message as string}
-            />
-            <label htmlFor='password' className='block mb-2 text-sm font-medium text-gray-900'>
-              Mật khẩu
-            </label>
-            <Input
-              name='password'
-              type='password'
-              placeholder='Mật khẩu'
-              register={register}
-              errorMessage={errors?.password?.message as string}
-              autoComplete='on'
-              className='ssm:mb-0 lg:mb-1 ssm:min-h-[63px] relative'
-            />
-            <label htmlFor='confirm_password' className='block mb-2 text-sm font-medium text-gray-900'>
-              Xác nhận mật khẩu
-            </label>
-            <Input
-              name='confirm_password'
-              type='password'
-              placeholder='Xác nhận mật khẩu'
-              register={register}
-              errorMessage={errors?.confirm_password?.message as string}
-              autoComplete='on'
-              className='ssm:mb-0 lg:mb-1 ssm:min-h-[63px] relative'
-            />
-            <Button isLoading={registerMutation.isPending} disabled={registerMutation.isPending}>
-              Đăng Ký
-            </Button>
-            <DescriptionForm title='Đăng nhập' href={path.login} />
-          </form>
+    <Fragment>
+      <Helmet>
+        <title>Register - Shoppe</title>
+        <meta name='description' content='This is a page register' />
+      </Helmet>
+      <div className='bg-[rgb(238,77,45)]'>
+        <div className='wrap-content lg:py-20 ssm:py-10'>
+          <div className='lg:flex lg:items-center lg:max-w-[1040px] ssm:max-w-[1200px] lg:h-[600px] ssm:h-full lg:bg-[url("https://down-vn.img.susercontent.com/file/sg-11134004-7ra0r-m4re2su1gpxufa")] lg:bg-contain lg:bg-no-repeat lg:bg-center'>
+            <form
+              className='bg-white lg:p-8 ssm:py-6 ssm:px-4 rounded-[4px] lg:w-[40%] ml-auto'
+              onSubmit={handleSubmitForm}
+            >
+              <h2 className='ssm:text-xl lg:text-2xl text-[#222] lg:mb-6 ssm:mb-3 lg:text-left ssm:text-center capitalize'>
+                Đăng ký tài khoản
+              </h2>
+              <label htmlFor='email' className='block mb-2 text-sm font-medium text-gray-900'>
+                Email
+              </label>
+              <Input
+                name='email'
+                type='email'
+                placeholder='Email'
+                register={register}
+                errorMessage={errors?.email?.message as string}
+              />
+              <label htmlFor='password' className='block mb-2 text-sm font-medium text-gray-900'>
+                Mật khẩu
+              </label>
+              <Input
+                name='password'
+                type='password'
+                placeholder='Mật khẩu'
+                register={register}
+                errorMessage={errors?.password?.message as string}
+                autoComplete='on'
+                className='ssm:mb-0 lg:mb-1 ssm:min-h-[63px] relative'
+              />
+              <label htmlFor='confirm_password' className='block mb-2 text-sm font-medium text-gray-900'>
+                Xác nhận mật khẩu
+              </label>
+              <Input
+                name='confirm_password'
+                type='password'
+                placeholder='Xác nhận mật khẩu'
+                register={register}
+                errorMessage={errors?.confirm_password?.message as string}
+                autoComplete='on'
+                className='ssm:mb-0 lg:mb-1 ssm:min-h-[63px] relative'
+              />
+              <Button isLoading={registerMutation.isPending} disabled={registerMutation.isPending}>
+                Đăng Ký
+              </Button>
+              <DescriptionForm title='Đăng nhập' href={path.login} />
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </Fragment>
   )
 }
 
