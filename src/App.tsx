@@ -1,6 +1,6 @@
 import { ToastContainer } from 'react-toastify'
 import useElementsRoute from './hooks/useElementsRoute'
-import { useContext, useEffect } from 'react'
+import { Fragment, useContext, useEffect } from 'react'
 import { AppContext } from './contexts/app.context'
 import { eventTargetLS } from './utils/auth'
 function App() {
@@ -14,10 +14,10 @@ function App() {
     }
   }, [reset])
   return (
-    <div>
+    <Fragment>
       {elementsRoute}
       <ToastContainer />
-    </div>
+    </Fragment>
   )
 }
 
